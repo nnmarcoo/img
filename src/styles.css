@@ -1,6 +1,6 @@
 :root {
   font-family:'Courier New', Courier, monospace;
-  font-size: 16px;
+  font-size: 15px;
 
   color: #ffffff;
   background-color: #282828;
@@ -10,6 +10,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  overflow: hidden;
+}
+
+.file-select {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.file-select:hover {
+  cursor: pointer;
 }
 
 .container {
@@ -17,9 +30,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 1vh);
+  height: 100vh;
 }
 
 .file-icon {
   font-size: 5rem;
+  line-height: 5rem;
 }
