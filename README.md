@@ -1,2 +1,2 @@
 # img
-Lightweight image viewer
+Lightweight image viewer made with [Tauri](https://tauri.app/)
