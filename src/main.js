@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const viewport = document.getElementById('main');
-
   viewport.addEventListener('dragover', (e) => {
     e.preventDefault();
   });
