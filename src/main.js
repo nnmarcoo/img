@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  document.getElementById('main').addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
   document.getElementById('main').addEventListener('drop', (e) => {
     e.preventDefault();
     console.log('hi');
