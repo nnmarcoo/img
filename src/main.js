@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   viewport.addEventListener('drop', (e) => {
-    viewport.files = e.dataTransfer.files;
     e.preventDefault();
     console.log('hi');
   });
