@@ -17,11 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('main').addEventListener('dragover', (e) => {
+  const viewport = document.getElementById('main');
+
+  viewport.addEventListener('dragover', (e) => {
     e.preventDefault();
   });
 
-  document.getElementById('main').addEventListener('drop', (e) => {
+  viewport.addEventListener('drop', (e) => {
+    viewport.files = e.dataTransfer.files;
     e.preventDefault();
     console.log('hi');
   });
