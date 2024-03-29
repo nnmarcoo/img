@@ -17,11 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.body.addEventListener('dragover', (e) => {
+  const viewport = document.getElementById('viewport');
+  viewport.addEventListener('dragover', (e) => {
     e.preventDefault();
   });
 
-  document.body.addEventListener('drop', (e) => {
+  viewport.addEventListener('drop', (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     console.log(files[0]);
