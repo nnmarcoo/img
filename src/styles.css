@@ -1,4 +1,4 @@
-:root {
+body, html {
   font-family:'Courier New', Courier, monospace;
   font-size: 15px;
 
@@ -10,10 +10,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  overflow: hidden;
+  margin: 0;
 }
 
-.file-select {
+#viewport {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+#file-select {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,19 +30,11 @@
   user-select: none;
 }
 
-.file-select:hover {
+#file-select:hover {
   cursor: pointer;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.file-icon {
+#file-icon {
   font-size: 5rem;
   line-height: 5rem;
 }

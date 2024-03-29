@@ -3,7 +3,7 @@ const { open } = window.__TAURI__.dialog
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  document.getElementById('fileSelect').addEventListener('click', () => {
+  document.getElementById('file-select').addEventListener('click', () => {
     const selected = open({
       multiple: false,
       filters: [{
@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const viewport = document.getElementById('main');
-  viewport.addEventListener('dragover', (e) => {
+  document.body.addEventListener('dragover', (e) => {
     e.preventDefault();
   });
 
-  viewport.addEventListener('drop', (e) => {
+  document.body.addEventListener('drop', (e) => {
     e.preventDefault();
-    console.log('hi');
+    const files = e.dataTransfer.files;
+    console.log(files[0]);
   });
 
 });
