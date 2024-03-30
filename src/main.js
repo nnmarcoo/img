@@ -52,4 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
       setImage(files[0]);
   });
 
+  viewport.addEventListener('mousedown', () => {
+    if (img.src !== '')
+    document.body.style.cursor = 'grabbing';
+  });
+
+  viewport.addEventListener('mouseup', () => {
+    document.body.style.cursor = 'default';
+  });
+
 });
