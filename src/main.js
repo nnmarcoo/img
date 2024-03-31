@@ -55,15 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setImage(selected);
   });
 
-  viewport.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-
-  viewport.addEventListener('dragenter', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  });
-
   viewport.addEventListener('drop', (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
@@ -81,5 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.cursor = 'default';
   });
 
+  viewport.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  viewport.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
 
 });
