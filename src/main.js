@@ -5,9 +5,11 @@ const { appDataDir, join } = window.__TAURI__.path;
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  
   const img = document.getElementById('image');
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
+  const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   async function setImage(file) {
     if (img.src === '')
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       multiple: false,
       filters: [{
         name: 'Image',
-        extensions: ['png', 'jpeg']
+        extensions: imgTypes
         }]
     })
 
@@ -48,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
   viewport.addEventListener('drop', (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    if (files[0] !== undefined)
+
+    if (imgTypes.includes(files[0].type.substring(6)))
       setImage(files[0]);
   });
 
@@ -58,7 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   viewport.addEventListener('mouseup', () => {
+    console.log('test');
     document.body.style.cursor = 'default';
   });
+
+
 
 });
