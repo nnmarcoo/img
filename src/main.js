@@ -5,7 +5,6 @@ const { appDataDir, join } = window.__TAURI__.path;
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  
   const img = document.getElementById('image');
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   async function setImage(file) {
     if (img.src === '')
       fileSelect.style.display = 'none';
-
     if (typeof file === 'string') {
       img.src = convertFileSrc(file);
       return;
@@ -22,9 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const reader = new FileReader();
     reader.onload = function(event) {
-      const imageUrl = event.target.result;
-      img.src = imageUrl;
-    };
+      img.src = event.target.result;
+    }
     reader.readAsDataURL(file);
   }
 
@@ -37,10 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }]
     })
 
-    if (selected !== null) {
+    if (selected !== null)
       setImage(selected);
-      // TODO: send it to rust?
-    }
   });
 
   viewport.addEventListener('dragover', (e) => {
