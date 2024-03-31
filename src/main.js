@@ -9,16 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
-  var fileWidth;
-  var fileHeight;
-
   function initImageSize() {
-    img.style.width =  'auto';
-    img.style.height = 'auto';
-    fileWidth = img.offsetWidth;
-    fileHeight = img.offsetHeight;
-
-    if (img.offsetWidth > img.offsetHeight) {
+    if (img.naturalWidth > img.naturalHeight) {
       img.style.width = '70%';
       img.style.height = 'auto';
     }
@@ -45,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     img.onload = () => {
-    initImageSize();
+      initImageSize();
     }
   }
 
@@ -76,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('mousedown', () => {
     if (img.src !== '')
-    document.body.style.cursor = 'grabbing';
+      document.body.style.cursor = 'grabbing';
   });
 
   viewport.addEventListener('mouseup', () => {
