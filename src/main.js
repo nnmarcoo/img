@@ -1,7 +1,6 @@
 const { invoke } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
-const { appDataDir, join } = window.__TAURI__.path;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -10,19 +9,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
+  var fileWidth;
+  var fileHeight;
+
+  function initImageSize() {
+    img.style.width =  'auto';
+    img.style.height = 'auto';
+    fileWidth = img.offsetWidth;
+    fileHeight = img.offsetHeight;
+
+    if (img.offsetWidth > img.offsetHeight) {
+      img.style.width = '70%';
+      img.style.height = 'auto';
+    }
+    else {
+      img.style.width = 'auto';
+      img.style.height = '70%';
+    }
+    img.style.width = img.offsetWidth + 'px';
+    img.style.height = img.offsetHeight + 'px';
+  }
+
   async function setImage(file) {
     if (img.src === '')
       fileSelect.style.display = 'none';
     if (typeof file === 'string') {
       img.src = convertFileSrc(file);
-      return;
+    }
+    else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
     }
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      img.src = event.target.result;
+    img.onload = () => {
+    initImageSize();
     }
-    reader.readAsDataURL(file);
   }
 
   fileSelect.addEventListener('click', async () => {
@@ -56,10 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   viewport.addEventListener('mouseup', () => {
-    console.log('test');
     document.body.style.cursor = 'default';
   });
-
 
 
 });
