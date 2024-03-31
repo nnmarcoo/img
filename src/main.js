@@ -8,18 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
-  const initSize = .8;
+  const initSize = .6;
 
-  function initImageSize() {
+  function initImageSize() { // TODO: Fit image instead?
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (img.naturalWidth > img.naturalHeight) {
       img.style.width = initSize * viewport.clientWidth + 'px';
-      img.style.height =  img.offsetWidth / aspectRatio + 'px';
+      img.style.height = img.offsetWidth / aspectRatio + 'px';
     }
     else {
       img.style.height = initSize * viewport.clientHeight + 'px';
-      img.style.width =  img.offsetHeight * aspectRatio + 'px';
+      img.style.width = img.offsetHeight * aspectRatio + 'px';
     }
   }
 
