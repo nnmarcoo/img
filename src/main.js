@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
   const initSize = .6;
 
-  function initImageSize() { // TODO: Fit image instead?
+  function initImageSize() {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (img.naturalWidth > img.naturalHeight) {
@@ -57,6 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('dragover', (e) => {
     e.preventDefault();
+  });
+
+  viewport.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
   });
 
   viewport.addEventListener('drop', (e) => {
