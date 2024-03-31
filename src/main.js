@@ -8,18 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
+  const initSize = .8;
 
-  function initImageSize() { // TODO: Change to do calculations myself instead of using auto?
+  function initImageSize() {
+    const aspectRatio = img.naturalWidth / img.naturalHeight;
+
     if (img.naturalWidth > img.naturalHeight) {
-      img.style.width = '70%';
-      img.style.height = 'auto';
+      img.style.width = initSize * viewport.clientWidth + 'px';
+      img.style.height =  img.offsetWidth / aspectRatio + 'px';
     }
     else {
-      img.style.width = 'auto';
-      img.style.height = '70%';
+      img.style.height = initSize * viewport.clientHeight + 'px';
+      img.style.width =  img.offsetHeight * aspectRatio + 'px';
     }
-    img.style.width = img.offsetWidth + 'px';
-    img.style.height = img.offsetHeight + 'px';
   }
 
   async function setImage(file) {

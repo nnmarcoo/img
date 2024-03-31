@@ -39,6 +39,10 @@ body, html {
   line-height: 5rem;
 }
 
+#image {
+  image-rendering: pixelated;
+}
+
 .disable-select {
     -webkit-user-select: none;
     -khtml-user-select: none;
