@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
-  function initImageSize() {
+  function initImageSize() { // TODO: Change to do calculations myself instead of using auto?
     if (img.naturalWidth > img.naturalHeight) {
       img.style.width = '70%';
       img.style.height = 'auto';
