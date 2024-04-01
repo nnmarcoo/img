@@ -5,7 +5,7 @@ use std::{env, thread, time};
 
 #[tauri::command]
 fn show_window(window: tauri::Window) {
-    thread::sleep(time::Duration::from_millis(100));
+    thread::sleep(time::Duration::from_millis(5));
     window.show().unwrap();
 }
 
