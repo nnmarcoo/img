@@ -95,13 +95,11 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
 
       - name: Install frontend
-        run: |
-          yarn --frozen-lockfile
+        # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
+        run: yarn install # Change this to npm, yarn or pnpm.
 
-      - name: CI Build
-        if: ${{ github.ref_type == 'branch' }}
-        run: |
-          yarn rls
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0
 
       - name: CI Upload Windows
         if: ${{ github.ref_type == 'branch' && matrix.platform == 'windows-latest' }}
