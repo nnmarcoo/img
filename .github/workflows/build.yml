@@ -39,5 +39,9 @@ jobs:
       - name: Install app dependencies
         run: npm install
 
+      # Update the bundle identifier in tauri.conf.json
+      - name: Update bundle identifier
+        run: sed -i 's/com.tauri.dev/your.unique.bundle.identifier/' tauri.conf.json
+
       - name: Build Tauri app
         run: tauri build
