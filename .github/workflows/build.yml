@@ -73,14 +73,6 @@ jobs:
 
       # build the changelog based on the commit messages between the versioned tags
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        # NOTE: enterprise developers may hard code a version
-        with:
-          node-version: 'lts/*'
-          cache: yarn
-          # node-version-file: '.nvmrc'
-
       - name: Setup Rust
         run: |
           rustup update --no-self-update
