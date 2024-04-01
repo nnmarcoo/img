@@ -31,7 +31,8 @@
         "title": "img",
         "width": 1000,
         "height": 750,
-        "fileDropEnabled": false
+        "fileDropEnabled": false,
+        "visible": false
       }
     ],
     "security": {

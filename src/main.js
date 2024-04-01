@@ -3,6 +3,7 @@ const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
 
 document.addEventListener('DOMContentLoaded', () => {
+  invoke('show_window');
 
   const img = document.getElementById('image');
   const fileSelect = document.getElementById('file-select');
