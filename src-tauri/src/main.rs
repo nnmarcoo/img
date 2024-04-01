@@ -1,11 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{env, thread, time};
+use std::env;
 
 #[tauri::command]
 fn show_window(window: tauri::Window) {
-    thread::sleep(time::Duration::from_millis(5));
     window.show().unwrap();
 }
 
