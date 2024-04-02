@@ -3,6 +3,7 @@ const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
 
 // REMINDER: Remove dormant event handlers
+// TODO: panning is broken because viewport is a flexbox
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
@@ -67,14 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('wheel', (e) => {
     // TODO: Implement
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (e.buttons !== 1) return;
-    viewport.scrollLeft -= e.clientX - prevX;
-    viewport.scrollTop -= e.clientY - prevY;
-    prevX = e.clientX;
-    prevY = e.clientY;
+    console.log((img.clientWidth / img.naturalWidth) * 100);
   });
 
   viewport.addEventListener('drop', (e) => {
@@ -83,6 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (imgTypes.includes(files[0].type.substring(6)))
       setImage(files[0]);
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (e.buttons !== 1) return;
+    viewport.scrollLeft -= e.clientX - prevX;
+    viewport.scrollTop -= e.clientY - prevY;
+    prevX = e.clientX;
+    prevY = e.clientY;
   });
 
   viewport.addEventListener('mousedown', (e) => {
