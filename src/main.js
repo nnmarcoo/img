@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (img.naturalWidth > img.naturalHeight) {
       img.style.width = initSize * viewport.clientWidth + 'px';
-      img.style.height = img.offsetWidth / aspectRatio + 'px';
+      img.style.height = img.clientWidth / aspectRatio + 'px';
     }
     else {
       img.style.height = initSize * viewport.clientHeight + 'px';
-      img.style.width = img.offsetHeight * aspectRatio + 'px';
+      img.style.width = img.clientHeight * aspectRatio + 'px';
     }
   }
 
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     img.onload = () => {
       initImageSize();
     }
+    console.log(img.clientWidth);
   }
 
   async function selectFile() {
@@ -63,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
       fileSelect.removeEventListener('click', selectFile);
     }
   }
+
+  viewport.addEventListener('wheel', (e) => {
+    // TODO: Implement
+  });
 
   document.addEventListener('mousemove', (e) => {
     if (e.buttons !== 1) return;
@@ -82,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('mousedown', (e) => {
     if (img.src === '') return;
+    if (e.buttons !== 1) return; // Is there a better solution?
     document.body.style.cursor = 'grabbing';
     prevX = e.clientX;
     prevY = e.clientY;
