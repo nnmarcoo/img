@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     img.onload = () => {
       initImageSize();
     }
-    console.log(img.clientWidth);
   }
 
   async function selectFile() {
