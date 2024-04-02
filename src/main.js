@@ -2,6 +2,8 @@ const { invoke } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
 
+// REMINDER: Remove dormant event handlers
+
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
 
@@ -9,7 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
-  const initSize = .6;
+  const initSize = .8;
+
+  let prevX = 0, prevY = 0;
+
+  fileSelect.addEventListener('click', selectFile);
 
   function initImageSize() {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -24,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function setImage(file) {
+  function setImage(file) {
     if (img.src === '')
       fileSelect.style.display = 'none';
     if (typeof file === 'string') {
@@ -43,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  fileSelect.addEventListener('click', async () => {
+  async function selectFile() {
     const selected = await open({
       multiple: false,
       filters: [{
@@ -52,8 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }]
     })
 
-    if (selected !== null)
+    if (selected !== null) {
       setImage(selected);
+      fileSelect.removeEventListener('click', selectFile);
+    }
+  }
+
+  viewport.addEventListener('mousemove', (e) => {
+    if (e.buttons !== 1) return;
+    viewport.scrollLeft -= e.clientX - prevX;
+    viewport.scrollTop -= e.clientY - prevY;
+    prevX = e.clientX;
+    prevY = e.clientY;
   });
 
   viewport.addEventListener('drop', (e) => {
@@ -64,12 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
       setImage(files[0]);
   });
 
-  viewport.addEventListener('mousedown', () => {
-    if (img.src !== '')
-      document.body.style.cursor = 'grabbing';
+  viewport.addEventListener('mousedown', (e) => {
+    if (img.src === '') return;
+    document.body.style.cursor = 'grabbing';
+    prevX = e.clientX;
+    prevY = e.clientY;
   });
 
   viewport.addEventListener('mouseup', () => {
+    if (img.src === '') return;
     document.body.style.cursor = 'default';
   });
 
