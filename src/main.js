@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const initSize = .6;
 
   let prevX = 0, prevY = 0;
-  let isDragging = false;
 
   fileSelect.addEventListener('click', selectFile);
 
