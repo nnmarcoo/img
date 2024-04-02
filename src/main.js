@@ -11,9 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
-  const initSize = .8;
+  const initSize = .6;
 
   let prevX = 0, prevY = 0;
+  let isDragging = false;
 
   fileSelect.addEventListener('click', selectFile);
 
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  viewport.addEventListener('mousemove', (e) => {
+  document.addEventListener('mousemove', (e) => {
     if (e.buttons !== 1) return;
     viewport.scrollLeft -= e.clientX - prevX;
     viewport.scrollTop -= e.clientY - prevY;
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     prevY = e.clientY;
   });
 
-  viewport.addEventListener('mouseup', () => {
+  document.addEventListener('mouseup', () => {
     if (img.src === '') return;
     document.body.style.cursor = 'default';
   });
