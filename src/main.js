@@ -3,6 +3,7 @@ const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
 
 // REMINDER: Remove dormant event handlers
+// TODO: minify with esbuild
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
