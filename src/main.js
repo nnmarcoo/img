@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setImage(file) {
+    img.style.width = '0px';
+    img.style.height = '0px';
     if (img.src === '')
       fileSelect.style.display = 'none';
     if (typeof file === 'string') {
