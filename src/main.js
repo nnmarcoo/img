@@ -86,14 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('mousemove', (e) => {
     if (e.buttons !== 1 || !isDragging) return;
 
-    var marginTop = parseInt(img.style.marginTop) || 0;
-    var marginLeft = parseInt(img.style.marginLeft) || 0;
+    let marginTop = parseInt(img.style.marginTop) || 0;
+    let marginLeft = parseInt(img.style.marginLeft) || 0;
 
-    var newMarginTop = marginTop + 2*(e.clientY - prevY);
-    var newMarginLeft = marginLeft + 2*(e.clientX - prevX);
+    let newMarginTop = marginTop + 2*(e.clientY - prevY);
+    let newMarginLeft = marginLeft + 2*(e.clientX - prevX);
 
-    var clampedNewMarginTop = clamp(newMarginTop, -img.height, img.height);
-    var clampedNewMarginLeft = clamp(newMarginLeft, -img.width, img.width);
+    let clampedNewMarginTop = clamp(newMarginTop, -img.height, img.height);
+    let clampedNewMarginLeft = clamp(newMarginLeft, -img.width, img.width);
 
     img.style.marginTop = clampedNewMarginTop + 'px';
     img.style.marginLeft = clampedNewMarginLeft + 'px';
