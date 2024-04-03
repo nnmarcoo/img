@@ -23,22 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (img.naturalWidth > img.naturalHeight) {
-      let w6 = initSize * viewport.clientWidth;
-      let nmw = Math.round(w6 / (.05 * img.naturalWidth));
-      img.style.width = nmw * (.05 * img.naturalWidth) + 'px';
+      img.style.width = setAndRound(viewport.clientWidth, img.naturalWidth) + 'px';
       img.style.height = img.clientWidth / aspectRatio + 'px';
     }
     else {
-      let h6 = initSize * viewport.clientHeight;
-      let nmh = Math.round(h6 / (.05 * img.naturalHeight));
-      img.style.height = nmh * (0.05 * img.naturalHeight) + 'px';
+      img.style.height = setAndRound(viewport.clientHeight, img.naturalHeight) + 'px';
       img.style.width = img.clientHeight * aspectRatio + 'px';
     }
   }
 
   function setImage(file) {
-    img.style.width = '0px';
-    img.style.height = '0px';
+    hide(img);
     if (img.src === '')
       fileSelect.style.display = 'none';
     if (typeof file === 'string') {
@@ -70,10 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setImage(selected);
       fileSelect.removeEventListener('click', selectFile);
     }
-  }
-
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
   }
 
   viewport.addEventListener('wheel', (e) => {
@@ -133,5 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     e.stopPropagation();
   });
+
+  function setAndRound(n1, n2) {
+    let size = initSize * n1;
+    let rounded = Math.round(size / (.05 * n2));
+    return rounded * (.05 * n2);
+  }
+
+  function hide(e) {
+    e.style.width = '0px';
+    e.style.height = '0px';
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
 
 });
