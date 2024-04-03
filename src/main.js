@@ -67,12 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
+    return Math.min(Math.max(value, min), max);
+  }
 
   viewport.addEventListener('wheel', (e) => {
     // TODO: Implement
-    //console.log((img.clientWidth / img.naturalWidth) * 100);
+    img.style.width = img.clientWidth * 1.1 + 'px';
+    img.style.height = img.clientHeight * 1.1 + 'px';
+    console.log((img.clientWidth / img.naturalWidth) * 100);
   });
 
   viewport.addEventListener('drop', (e) => {
