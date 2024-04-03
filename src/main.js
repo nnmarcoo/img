@@ -23,11 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (img.naturalWidth > img.naturalHeight) {
-      img.style.width = initSize * viewport.clientWidth + 'px';
+      let w6 = initSize * viewport.clientWidth;
+      let nmw = Math.round(w6 / (.05 * img.naturalWidth));
+      img.style.width = nmw * (.05 * img.naturalWidth) + 'px';
       img.style.height = img.clientWidth / aspectRatio + 'px';
     }
     else {
-      img.style.height = initSize * viewport.clientHeight + 'px';
+      let h6 = initSize * viewport.clientHeight;
+      let nmh = Math.round(h6 / (.05 * img.naturalHeight));
+      img.style.height = nmh * (0.05 * img.naturalHeight) + 'px';
       img.style.width = img.clientHeight * aspectRatio + 'px';
     }
   }
@@ -74,9 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('wheel', (e) => {
     // TODO: Implement
-    img.style.width = img.clientWidth * 1.1 + 'px';
-    img.style.height = img.clientHeight * 1.1 + 'px';
-    console.log((img.clientWidth / img.naturalWidth) * 100);
+    //img.style.width = img.clientWidth * 1.1 + 'px';
+    //img.style.height = img.clientHeight * 1.1 + 'px';
+    console.log(Math.round((img.clientWidth / img.naturalWidth) * 100));
   });
 
   viewport.addEventListener('drop', (e) => {
