@@ -3,7 +3,6 @@ const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
 
 // REMINDER: Remove dormant event handlers
-// TODO: panning is broken because viewport is a flexbox
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
@@ -15,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const initSize = .6;
 
   let prevX = 0, prevY = 0;
+  let isDragging = false;
 
   fileSelect.addEventListener('click', selectFile);
 
@@ -79,12 +79,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('mousemove', (e) => {
-    if (e.buttons !== 1) return;
-    viewport.scrollLeft -= e.clientX - prevX;
-    viewport.scrollTop -= e.clientY - prevY;
+    if (e.buttons !== 1 || !isDragging) return;
+
+    var marginTop = parseInt(img.style.marginTop) || 0;
+    var marginLeft = parseInt(img.style.marginLeft) || 0;
+
+    img.style.marginTop = marginTop + 2*(e.clientY - prevY) + 'px';
+    img.style.marginLeft = marginLeft + 2*(e.clientX - prevX) + 'px';
+
     prevX = e.clientX;
     prevY = e.clientY;
-  });
+});
 
   viewport.addEventListener('mousedown', (e) => {
     if (img.src === '') return;
@@ -92,11 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.cursor = 'grabbing';
     prevX = e.clientX;
     prevY = e.clientY;
+    isDragging = true;
   });
 
   document.addEventListener('mouseup', () => {
     if (img.src === '') return;
     document.body.style.cursor = 'default';
+    isDragging = false;
   });
 
   viewport.addEventListener('dragover', (e) => {
