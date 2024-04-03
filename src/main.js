@@ -68,10 +68,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   viewport.addEventListener('wheel', (e) => {
-    // TODO: Implement
-    //img.style.width = img.clientWidth * 1.1 + 'px';
-    //img.style.height = img.clientHeight * 1.1 + 'px';
-    console.log(Math.round((img.clientWidth / img.naturalWidth) * 100));
+
+    let current = img.clientWidth / img.naturalWidth;
+    let mult = 0;
+
+    if (current <= .2) // TODO: Change
+      mult = .05;
+    else if (current <= 1)
+      mult = .1;
+    else if (current <= 2)
+      mult = .25;
+    else if (current <= 4)
+      mult = .5;
+    else if (current <= 8)
+      mult = 1;
+    else if (current <= 12)
+      mult = 2;
+    else if (current <= 21)
+      mult = 3;
+    else if (current <= 25)
+      mult = 4;
+    else
+      mult = 5;
+
+    let distX = img.naturalWidth * mult;
+    let distY = img.naturalHeight * mult;
+
+    if (e.deltaY < 0) { // up
+    if ((img.clientWidth + distX) / img.naturalWidth > 40) return;
+      img.style.width = img.clientWidth + distX + 'px';
+      img.style.height = img.clientHeight + distY + 'px';
+    }
+    else { // down
+    if ((img.clientWidth - distX) / img.naturalWidth < .05) return;
+      img.style.width = img.clientWidth - distX + 'px';
+      img.style.height = img.clientHeight - distY + 'px';
+    }
+    console.log(img.clientWidth / img.naturalWidth * 100);
   });
 
   viewport.addEventListener('drop', (e) => {
