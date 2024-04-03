@@ -66,9 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
   viewport.addEventListener('wheel', (e) => {
     // TODO: Implement
-    console.log((img.clientWidth / img.naturalWidth) * 100);
+    //console.log((img.clientWidth / img.naturalWidth) * 100);
   });
 
   viewport.addEventListener('drop', (e) => {
@@ -85,8 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
     var marginTop = parseInt(img.style.marginTop) || 0;
     var marginLeft = parseInt(img.style.marginLeft) || 0;
 
-    img.style.marginTop = marginTop + 2*(e.clientY - prevY) + 'px';
-    img.style.marginLeft = marginLeft + 2*(e.clientX - prevX) + 'px';
+    var newMarginTop = marginTop + 2*(e.clientY - prevY);
+    var newMarginLeft = marginLeft + 2*(e.clientX - prevX);
+
+    var clampedNewMarginTop = clamp(newMarginTop, -img.height, img.height);
+    var clampedNewMarginLeft = clamp(newMarginLeft, -img.width, img.width);
+
+    img.style.marginTop = clampedNewMarginTop + 'px';
+    img.style.marginLeft = clampedNewMarginLeft + 'px';
 
     prevX = e.clientX;
     prevY = e.clientY;
