@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let prevX = 0, prevY = 0;
   let isDragging = false;
 
+  let zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
+                    0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
+                    2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
+                    10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
+  let zoomStep = 0;
+
   fileSelect.addEventListener('click', selectFile);
 
   function initImageSize() {
@@ -68,43 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   viewport.addEventListener('wheel', (e) => {
-
-    let current = img.clientWidth / img.naturalWidth;
-    let mult = 0;
-
-    if (current <= .2) // TODO: Change
-      mult = .05;
-    else if (current <= 1)
-      mult = .1;
-    else if (current <= 2)
-      mult = .25;
-    else if (current <= 4)
-      mult = .5;
-    else if (current <= 8)
-      mult = 1;
-    else if (current <= 12)
-      mult = 2;
-    else if (current <= 21)
-      mult = 3;
-    else if (current <= 25)
-      mult = 4;
+    if (e.deltaY < 0) // scroll up
+      zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
     else
-      mult = 5;
+      zoomStep = Math.max(zoomStep - 1, 0);
 
-    let distX = img.naturalWidth * mult;
-    let distY = img.naturalHeight * mult;
-
-    if (e.deltaY < 0) { // up
-    if ((img.clientWidth + distX) / img.naturalWidth > 40) return;
-      img.style.width = img.clientWidth + distX + 'px';
-      img.style.height = img.clientHeight + distY + 'px';
-    }
-    else { // down
-    if ((img.clientWidth - distX) / img.naturalWidth < .05) return;
-      img.style.width = img.clientWidth - distX + 'px';
-      img.style.height = img.clientHeight - distY + 'px';
-    }
-    console.log(img.clientWidth / img.naturalWidth * 100);
+    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
+    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
   });
 
   viewport.addEventListener('drop', (e) => {
