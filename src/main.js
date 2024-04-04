@@ -81,23 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
     else
       zoomStep = Math.max(zoomStep - 1, 0);
 
-    let marginTop = parseInt(img.style.marginTop) || 0;
-    let marginLeft = parseInt(img.style.marginLeft) || 0;
-
     let width = img.naturalWidth * zoomSteps[zoomStep];
     let height = img.naturalHeight * zoomSteps[zoomStep];
-
-    let dWidth = width - img.clientWidth;
-    let dHeight = height - img.clientHeight;
-
-    let offsetX = e.clientX * dWidth / img.clientWidth;
-    let offsetY = e.clientY * dHeight / img.clientHeight;
 
     img.style.width =  width + 'px';
     img.style.height =  height + 'px';
 
-    //img.style.marginTop = marginTop - offsetY + 'px';
-    //img.style.marginLeft = marginLeft + offsetX/2 + 'px';
   });
 
   viewport.addEventListener('drop', (e) => {
