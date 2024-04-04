@@ -29,11 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (img.naturalWidth > img.naturalHeight) {
-      img.style.width = setAndRound(viewport.clientWidth, img.naturalWidth) + 'px';
+      initZoom(img.naturalWidth, viewport.clientWidth);
+      img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
       img.style.height = img.clientWidth / aspectRatio + 'px';
     }
     else {
-      img.style.height = setAndRound(viewport.clientHeight, img.naturalHeight) + 'px';
+      initZoom(img.naturalHeight, viewport.clientHeight);
+      img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
       img.style.width = img.clientHeight * aspectRatio + 'px';
     }
   }
@@ -79,8 +81,23 @@ document.addEventListener('DOMContentLoaded', () => {
     else
       zoomStep = Math.max(zoomStep - 1, 0);
 
-    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
-    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
+    let marginTop = parseInt(img.style.marginTop) || 0;
+    let marginLeft = parseInt(img.style.marginLeft) || 0;
+
+    let width = img.naturalWidth * zoomSteps[zoomStep];
+    let height = img.naturalHeight * zoomSteps[zoomStep];
+
+    let dWidth = width - img.clientWidth;
+    let dHeight = height - img.clientHeight;
+
+    let offsetX = e.clientX * dWidth / img.clientWidth;
+    let offsetY = e.clientY * dHeight / img.clientHeight;
+
+    img.style.width =  width + 'px';
+    img.style.height =  height + 'px';
+
+    //img.style.marginTop = marginTop - offsetY + 'px';
+    //img.style.marginLeft = marginLeft + offsetX/2 + 'px';
   });
 
   viewport.addEventListener('drop', (e) => {
@@ -134,10 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
     e.stopPropagation();
   });
 
-  function setAndRound(n1, n2) {
-    let size = initSize * n1;
-    let rounded = Math.round(size / (.05 * n2));
-    return rounded * (.05 * n2);
+  function initZoom(imgLength, viewportLength) {
+    for (let i = 0; i < zoomSteps.length; i++)
+      if (imgLength * zoomSteps[i] > viewportLength * .8) {
+        zoomStep = i-1;
+        return;
+      }
   }
 
   function hide(e) {
