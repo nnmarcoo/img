@@ -77,17 +77,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   viewport.addEventListener('wheel', (e) => {
     if (e.deltaY < 0) // scroll up
-      zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
     else
-      zoomStep = Math.max(zoomStep - 1, 0);
+        zoomStep = Math.max(zoomStep - 1, 0);
+
+    let marginTop = parseInt(img.style.marginTop) || 0;
+    let marginLeft = parseInt(img.style.marginLeft) || 0;
 
     let width = img.naturalWidth * zoomSteps[zoomStep];
     let height = img.naturalHeight * zoomSteps[zoomStep];
 
+    let dWidth = width - img.clientWidth;
+    let dHeight = height - img.clientHeight;
+
+    let mouse_center_x = e.clientX - viewport.clientWidth/2;
+    let mouse_center_y = e.clientY - viewport.clientHeight/2;
+
+    let mouse_image_x = mouse_center_x - marginLeft;
+    let mouse_image_y = mouse_center_y - marginTop;
+
+    let mouse_on_image_x = mouse_image_x * (img.clientWidth / width);
+    let mouse_on_image_y = mouse_image_y * (img.clientHeight / height);
+
+    console.log('e.client(X, Y): ' + e.clientX + ', ' + e.clientY + '\nmargin+(L,T)  : ' + mouse_on_image_x + ', ' + mouse_on_image_y);
+
     img.style.width =  width + 'px';
     img.style.height =  height + 'px';
 
-  });
+    //img.style.marginTop = marginTop - offsetY + 'px';
+    //img.style.marginLeft = marginLeft - offsetX + 'px';
+
+});
+
 
   viewport.addEventListener('drop', (e) => {
     e.preventDefault();
@@ -106,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let newMarginTop = marginTop + 2*(e.clientY - prevY);
     let newMarginLeft = marginLeft + 2*(e.clientX - prevX);
 
-    let clampedNewMarginTop = clamp(newMarginTop, -img.height, img.height);
-    let clampedNewMarginLeft = clamp(newMarginLeft, -img.width, img.width);
+    let clampedNewMarginTop = clamp(newMarginTop, -img.clientHeight, img.clientHeight);
+    let clampedNewMarginLeft = clamp(newMarginLeft, -img.clientWidth, img.clientWidth);
 
     img.style.marginTop = clampedNewMarginTop + 'px';
     img.style.marginLeft = clampedNewMarginLeft + 'px';
@@ -156,5 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
   }
+
+  function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
 
 });
