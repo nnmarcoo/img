@@ -4,6 +4,7 @@ const { convertFileSrc } = window.__TAURI__.tauri;
 
 // REMINDER: Remove dormant event handlers
 // TODO: minify with esbuild
+// TODO: Remove flexbox and calculate image position manually to center it
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
