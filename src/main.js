@@ -4,7 +4,6 @@ const { convertFileSrc } = window.__TAURI__.tauri;
 
 // REMINDER: Remove dormant event handlers
 // TODO: minify with esbuild
-// TODO: Remove flexbox and calculate image position manually to center it
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
@@ -90,15 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let dWidth = width - img.clientWidth;
     let dHeight = height - img.clientHeight;
 
-    let offsetX = (e.clientX - img.offsetLeft) * dWidth / img.clientWidth;
-    let offsetY = (e.clientY - img.offsetTop) * dHeight / img.clientHeight;
+    let offsetX = Math.round((e.clientX - img.offsetLeft) * dWidth / img.clientWidth);
+    let offsetY = Math.round((e.clientY - img.offsetTop) * dHeight / img.clientHeight);
 
     img.style.width =  width + 'px';
     img.style.height =  height + 'px';
 
-    img.style.marginLeft = marginLeft - offsetX + 'px';
-    img.style.marginTop = marginTop - offsetY + 'px';
-
+    img.style.marginLeft = clamp(marginLeft - offsetX, -img.clientWidth/2, img.clientWidth/2) + 'px';
+    img.style.marginTop = clamp(marginTop - offsetY, -img.clientHeight/2, img.clientHeight/2) + 'px';
 });
 
 
@@ -116,11 +114,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let marginLeft = parseInt(img.style.marginLeft) || 0;
     let marginTop = parseInt(img.style.marginTop) || 0;
 
-    let newMarginLeft = marginLeft + 2*(e.clientX - prevX);
-    let newMarginTop = marginTop + 2*(e.clientY - prevY);
+    let newMarginLeft = marginLeft + (e.clientX - prevX);
+    let newMarginTop = marginTop + (e.clientY - prevY);
+  
+    console.log(marginLeft + ', ' + marginTop);
 
-    img.style.marginLeft = clamp(newMarginLeft, -img.clientWidth, img.clientWidth) + 'px';
-    img.style.marginTop = clamp(newMarginTop, -img.clientHeight, img.clientHeight) + 'px';
+    img.style.marginLeft = clamp(newMarginLeft, -img.clientWidth/2, img.clientHeight/2) + 'px';
+    img.style.marginTop = clamp(newMarginTop, -img.clientHeight/2, img.clientHeight/2) + 'px';
 
     prevX = e.clientX;
     prevY = e.clientY;

@@ -16,9 +16,6 @@ body, html {
 }
 
 #viewport {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -29,6 +26,10 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #file-select:hover {
@@ -41,6 +42,10 @@ body, html {
 }
 
 #image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   image-rendering: pixelated;
 }
 
