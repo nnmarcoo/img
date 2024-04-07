@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function initImageSize() {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
+    center(img);
 
     if (img.naturalWidth > img.naturalHeight) {
       initZoom(img.naturalWidth, viewport.clientWidth);
@@ -167,8 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.min(Math.max(value, min), max);
   }
 
-  function map_range(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-}
+  function center(e) {
+    e.style.marginLeft = '0px';
+    e.style.marginTop = '0px';
+  }
 
 });
