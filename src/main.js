@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
-  const initSize = .6;
 
   let prevX = 0, prevY = 0;
   let isDragging = false;
