@@ -118,9 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let newMarginLeft = marginLeft + (e.clientX - prevX);
     let newMarginTop = marginTop + (e.clientY - prevY);
   
-    console.log(marginLeft + ', ' + marginTop);
-
-    img.style.marginLeft = clamp(newMarginLeft, -img.clientWidth/2, img.clientHeight/2) + 'px';
+    img.style.marginLeft = clamp(newMarginLeft, -img.clientWidth/2, img.clientWidth/2) + 'px';
     img.style.marginTop = clamp(newMarginTop, -img.clientHeight/2, img.clientHeight/2) + 'px';
 
     prevX = e.clientX;
