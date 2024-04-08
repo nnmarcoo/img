@@ -95,7 +95,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
   await listen('tauri://file-drop', (e) => {
-    setImage(e.payload[0]);
+    let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1);
+    if (imgTypes.includes(extension))
+      setImage(e.payload[0]);
   });
 
   document.addEventListener('mousemove', (e) => {

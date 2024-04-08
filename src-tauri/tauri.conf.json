@@ -6,7 +6,7 @@
   },
   "package": {
     "productName": "img",
-    "version": "0.3.3"
+    "version": "0.3.4"
   },
   "tauri": {
     "allowlist": {
