@@ -1,9 +1,14 @@
 const { invoke } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
 const { convertFileSrc } = window.__TAURI__.tauri;
+const { listen } = window.__TAURI__.event;
 
 // REMINDER: Remove dormant event handlers
 // TODO: minify with esbuild
+
+await listen('click', (e) => {
+
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   invoke('show_window');
@@ -45,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (img.src === '')
       fileSelect.style.display = 'none';
     if (typeof file === 'string') {
+      // TODO: Pass to rust
       img.src = convertFileSrc(file);
     }
     else {
