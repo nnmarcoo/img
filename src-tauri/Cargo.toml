@@ -1,6 +1,6 @@
 [package]
 name = "img"
-version = "0.3.5"
+version = "0.3.6"
 description = "img"
 authors = ["Marco Todorov"]
 edition = "2021"
