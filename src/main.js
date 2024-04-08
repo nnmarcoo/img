@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       fileSelect.style.display = 'none';
 
     img.src = convertFileSrc(file);
-    
-    // TODO: Pass to rust
+    invoke('set_image_path', {path: file});  
   }
 
   img.onload = () => {
@@ -117,8 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
   viewport.addEventListener('mousedown', (e) => {
-    if (img.src === '') return;
-    if (e.buttons !== 1) return; // Is there a better solution?
+    if (img.src === '' || e.buttons !== 1) return;
     document.body.style.cursor = 'grabbing';
     prevX = e.clientX;
     prevY = e.clientY;
@@ -129,15 +127,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (img.src === '') return;
     document.body.style.cursor = 'default';
     isDragging = false;
-  });
-
-  viewport.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-
-  viewport.addEventListener('dragenter', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
   });
 
   function initZoom(imgLength, viewportLength) {

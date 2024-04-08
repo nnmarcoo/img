@@ -3,9 +3,18 @@
 
 use std::env;
 
+static mut IMAGE_PATH: String = String::new();
+
 #[tauri::command]
 fn show_window(window: tauri::Window) {
     window.show().unwrap();
+}
+
+#[tauri::command]
+fn set_image_path(path: String) {
+    unsafe {
+        IMAGE_PATH = path;
+    }
 }
 
 fn main() {
@@ -13,7 +22,7 @@ fn main() {
     dbg!(args);
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_window])
+        .invoke_handler(tauri::generate_handler![show_window, set_image_path])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }
