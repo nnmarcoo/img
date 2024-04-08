@@ -1,16 +1,11 @@
-const { invoke } = window.__TAURI__.tauri;
+const { invoke, convertFileSrc } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
-const { convertFileSrc } = window.__TAURI__.tauri;
 const { listen } = window.__TAURI__.event;
 
 // REMINDER: Remove dormant event handlers
 // TODO: minify with esbuild
 
-await listen('click', (e) => {
-
-});
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
 
   const img = document.getElementById('image');
@@ -49,21 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
     hide(img);
     if (img.src === '')
       fileSelect.style.display = 'none';
-    if (typeof file === 'string') {
-      // TODO: Pass to rust
-      img.src = convertFileSrc(file);
-    }
-    else {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        img.src = e.target.result;
-      }
-      reader.readAsDataURL(file);
-    }
 
-    img.onload = () => {
-      initImageSize();
-    }
+    img.src = convertFileSrc(file);
+    
+    // TODO: Pass to rust
+  }
+
+  img.onload = () => {
+    initImageSize();
   }
 
   async function selectFile() {
@@ -106,13 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     img.style.marginTop = clamp(marginTop - offsetY, -img.clientHeight/2, img.clientHeight/2) + 'px';
 });
 
-
-  viewport.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-
-    if (imgTypes.includes(files[0].type.substring(6)))
-      setImage(files[0]);
+  await listen('tauri://file-drop', (e) => {
+    setImage(e.payload[0]);
   });
 
   document.addEventListener('mousemove', (e) => {
