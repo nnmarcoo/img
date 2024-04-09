@@ -1,5 +1,5 @@
 body, html, :root {
-  font-family:'Courier New', Courier, monospace;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-size: 15px;
 
   color: #EEEEEE;
@@ -27,7 +27,7 @@ button {
   color: white;
   transition-duration: 0.2s;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 button:hover {
