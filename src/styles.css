@@ -30,17 +30,28 @@ body, html, :root {
 */
 
 
-#grid {
+#main-grid {
   display: grid;
   grid-template-rows: calc(100vh - 30px) 30px;
   grid-template-columns: 100vw;
 }
 
-#bottom-bar{
+#bottom-bar-grid {
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 30px 30px 30px 30px 30px;
+  gap: 5px;
+  margin-right: 5px;
+}
+
+#bottom-bar-flex {
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   background-color: #31363F;
-  z-index: 1;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
 #viewport {

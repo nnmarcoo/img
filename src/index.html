@@ -8,7 +8,7 @@
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <div id="grid" draggable="false">
+    <div id="main-grid" draggable="false">
       <div id="viewport" draggable="false">
         <img id="image" draggable="false">
         <div id="file-select" draggable="false">
@@ -16,8 +16,10 @@
           <div>Drag or select file to begin</div>
         </div>
       </div>
-      <div id=bottom-bar>
-
+      <div id="bottom-bar-flex">
+        <div id=bottom-bar-grid>
+          <div id="zoom-text"></div>
+        </div>
       </div>
     </div>
   </body>

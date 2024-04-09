@@ -5,6 +5,7 @@ const { listen } = window.__TAURI__.event;
 // REMINDER: Remove dormant event handlers
 // TODO: Minify with esbuild
 // TODO: Initializing image size doesn't quite work
+// TODO: If mouse isn't in the image, zoom towards center?
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const img = document.getElementById('image');
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
+  const zoomText = document.getElementById('zoom-text');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
       img.style.width = img.clientHeight * aspectRatio + 'px';
     }
+    updateZoomText();
   }
 
   function setImage(file) {
@@ -70,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   viewport.addEventListener('wheel', (e) => {
+    if (img.src === '') return;
     if (e.deltaY < 0) // scroll up
         zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
     else
@@ -92,6 +96,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     img.style.marginLeft = clamp(marginLeft - offsetX, -img.clientWidth/2, img.clientWidth/2) + 'px';
     img.style.marginTop = clamp(marginTop - offsetY, -img.clientHeight/2, img.clientHeight/2) + 'px';
+
+    updateZoomText();
 });
 
   await listen('tauri://file-drop', (e) => {
@@ -155,6 +161,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function center(e) {
     e.style.marginLeft = '0px';
     e.style.marginTop = '0px';
+  }
+
+  function updateZoomText() {
+    zoomText.textContent = zoomSteps[zoomStep] * 100 + '%';
   }
 
 });
