@@ -3,7 +3,8 @@ const { open } = window.__TAURI__.dialog;
 const { listen } = window.__TAURI__.event;
 
 // REMINDER: Remove dormant event handlers
-// TODO: minify with esbuild
+// TODO: Minify with esbuild
+// TODO: Initializing image size doesn't quite work
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -16,10 +17,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   let prevX = 0, prevY = 0;
   let isDragging = false;
 
-  let zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
-                    0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
-                    2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
-                    10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
+  const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
+                      0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
+                      2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
+                      10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
   let zoomStep = 0;
 
   fileSelect.addEventListener('click', selectFile);
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function initZoom(imgLength, viewportLength) {
     for (let i = 0; i < zoomSteps.length; i++)
       if (imgLength * zoomSteps[i] > viewportLength * .8) {
-        zoomStep = i-1;
+        zoomStep = clamp(i-1, 0, zoomSteps.length - 1);
         return;
       }
   }
