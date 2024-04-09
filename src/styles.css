@@ -2,8 +2,8 @@ body, html, :root {
   font-family:'Courier New', Courier, monospace;
   font-size: 15px;
 
-  color: #ffffff;
-  background-color: #282828;
+  color: #EEEEEE;
+  background-color: #222831;
   margin: 0;
   padding: 0;
 
@@ -21,6 +21,15 @@ body, html, :root {
   user-select: none;
 }
 
+/* darkest
+ #222831
+ #31363F
+ #76ABAE
+ #EEEEEE
+   lightest
+*/
+
+
 #grid {
   display: grid;
   grid-template-rows: calc(100vh - 30px) 30px;
@@ -30,7 +39,7 @@ body, html, :root {
 #bottom-bar{
   grid-row: 2 / 3;
   grid-column: 1 / 2;
-  background-color: rgb(0, 0, 0);
+  background-color: #31363F;
   z-index: 1;
 }
 
