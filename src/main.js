@@ -102,6 +102,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.addEventListener('mousemove', (e) => {
     if (e.buttons !== 1 || !isDragging) return;
+    if (document.body.style.cursor !== 'grabbing')
+      document.body.style.cursor = 'grabbing';
 
     let marginLeft = parseInt(img.style.marginLeft) || 0;
     let marginTop = parseInt(img.style.marginTop) || 0;
@@ -118,7 +120,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   viewport.addEventListener('mousedown', (e) => {
     if (img.src === '' || e.buttons !== 1) return;
-    document.body.style.cursor = 'grabbing';
     prevX = e.clientX;
     prevY = e.clientY;
     isDragging = true;
@@ -128,6 +129,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (img.src === '') return;
     document.body.style.cursor = 'default';
     isDragging = false;
+  });
+
+  viewport.addEventListener('dblclick', () => {
+    center(img);
   });
 
   function initZoom(imgLength, viewportLength) {
