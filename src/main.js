@@ -144,15 +144,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   zoomText.addEventListener('input', () => {
-    zoomText.innerText = zoomText.innerText.replace(/\D/g, '');
+    zoomText.textContent = zoomText.textContent.replace(/\D/g, '');
   });
 
-  zoomText.addEventListener('focus', (element) => {
-    const range = document.createRange();
-    range.selectNodeContents(element);
-    const selection = window.getSelection();
+  zoomText.addEventListener('focus', () => {
+    let range = document.createRange();
+    range.selectNodeContents(zoomText);
+    let selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
+  });
+
+  zoomText.addEventListener('blur', () => {
+    window.getSelection().removeAllRanges();
   });
 
   function initZoom(imgLength, viewportLength) {

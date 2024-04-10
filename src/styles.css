@@ -79,7 +79,7 @@ button:hover {
 }
 
 #zoom-text:focus {
-  border: 1px solid #222831;
+  border: none;
   border-radius: 3px;
   outline: 1px solid #EEEEEE;
 }
@@ -127,5 +127,3 @@ button:hover {
   margin-left: 10px;
   margin-right: 10px;
 }
-
-
