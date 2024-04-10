@@ -81,17 +81,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     else
         zoomStep = Math.max(zoomStep - 1, 0);
 
-    let marginLeft = parseInt(img.style.marginLeft) || 0;
-    let marginTop = parseInt(img.style.marginTop) || 0;
+    const marginLeft = parseInt(img.style.marginLeft) || 0;
+    const marginTop = parseInt(img.style.marginTop) || 0;
 
-    let width = img.naturalWidth * zoomSteps[zoomStep];
-    let height = img.naturalHeight * zoomSteps[zoomStep];
+    const width = img.naturalWidth * zoomSteps[zoomStep];
+    const height = img.naturalHeight * zoomSteps[zoomStep];
 
-    let dWidth = width - img.clientWidth;
-    let dHeight = height - img.clientHeight;
+    const dWidth = width - img.clientWidth;
+    const dHeight = height - img.clientHeight;
 
-    let offsetX = Math.round((e.clientX - img.offsetLeft) * dWidth / img.clientWidth);
-    let offsetY = Math.round((e.clientY - img.offsetTop) * dHeight / img.clientHeight);
+    const offsetX = Math.round((e.clientX - img.offsetLeft) * dWidth / img.clientWidth);
+    const offsetY = Math.round((e.clientY - img.offsetTop) * dHeight / img.clientHeight);
 
     img.style.width =  width + 'px';
     img.style.height =  height + 'px';
@@ -144,10 +144,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   zoomText.addEventListener('input', () => {
-    zoomText.textContent = zoomText.textContent.replace(/\D/g, '');
+    let cleanText = zoomText.innerText.replace(/\D/g, '');
+    if (cleanText !== zoomText.innerText) {
+      zoomText.blur();
+      // TODO: set custom zoom value
+    }
+    if (cleanText.length > 0) 
+      zoomText.textContent = cleanText;
+    else
+      updateZoomText();
   });
 
-  zoomText.addEventListener('focus', () => {
+  zoomText.addEventListener('click', () => {
     let range = document.createRange();
     range.selectNodeContents(zoomText);
     let selection = window.getSelection();
@@ -182,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateZoomText() {
-    zoomTextSymbol.textContent = '%'; // Change
+    zoomTextSymbol.textContent = '%';
     zoomText.textContent = zoomSteps[zoomStep] * 100;
   }
 

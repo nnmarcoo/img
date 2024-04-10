@@ -63,6 +63,7 @@ button:hover {
   grid-template-rows: 100%;
   grid-template-columns: 30px 10px;
   margin-right: 5px;
+  gap: 2px;
 }
 
 #bottom-bar-flex {
