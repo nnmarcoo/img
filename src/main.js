@@ -6,6 +6,7 @@ const { listen } = window.__TAURI__.event;
 // TODO: Minify with esbuild
 // TODO: Initializing image size doesn't quite work
 // TODO: If mouse isn't in the image, zoom towards center?
+// TODO: Refactor so it does all the image setup and zoom text when the src changes
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fileSelect = document.getElementById('file-select');
   const viewport = document.getElementById('viewport');
   const zoomText = document.getElementById('zoom-text');
+  const zoomTextSymbol = document.getElementById('zoom-text-symbol');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -164,7 +166,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateZoomText() {
-    zoomText.textContent = zoomSteps[zoomStep] * 100 + '%';
+    zoomTextSymbol.textContent = '%';
+    zoomText.textContent = zoomSteps[zoomStep] * 100;
   }
 
 });
