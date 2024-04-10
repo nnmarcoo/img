@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   zoomText.addEventListener('input', () => {
-    let cleanText = zoomText.innerText.replace(/\D/g, '');
+    let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
     if (cleanText !== zoomText.innerText) {
       zoomText.blur();
     }
