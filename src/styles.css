@@ -75,19 +75,11 @@ button:hover {
 }
 
 #zoom-text {
-
   justify-self: end;
 }
 
-#zoom-text-symbol {
-}
-
 #zoom-text:hover {
-  cursor: pointer;
-}
-
-#zoom-in-button {
-
+  cursor: text;
 }
 
 #viewport {
