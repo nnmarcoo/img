@@ -144,9 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   zoomText.addEventListener('input', () => {
-    const text = zoomText.innerText;
-    const sanitizedText = text.replace(/\D/g, '');
-    zoomText.innerText = sanitizedText;
+    zoomText.innerText = zoomText.innerText.replace(/\D/g, '');
   });
 
   zoomText.addEventListener('focus', (element) => {
@@ -180,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateZoomText() {
-    zoomTextSymbol.textContent = '%';
+    zoomTextSymbol.textContent = '%'; // Change
     zoomText.textContent = zoomSteps[zoomStep] * 100;
   }
 
