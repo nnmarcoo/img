@@ -143,6 +143,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     center(img);
   });
 
+  zoomText.addEventListener('input', () => {
+    const text = zoomText.innerText;
+    const sanitizedText = text.replace(/\D/g, '');
+    zoomText.innerText = sanitizedText;
+  });
+
+  zoomText.addEventListener('focus', (element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+
   function initZoom(imgLength, viewportLength) {
     for (let i = 0; i < zoomSteps.length; i++)
       if (imgLength * zoomSteps[i] > viewportLength * .8) {

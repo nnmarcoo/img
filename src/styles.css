@@ -78,6 +78,12 @@ button:hover {
   justify-self: end;
 }
 
+#zoom-text:focus {
+  border: 1px solid #222831;
+  border-radius: 3px;
+  outline: 1px solid #EEEEEE;
+}
+
 #zoom-text:hover {
   cursor: text;
 }
