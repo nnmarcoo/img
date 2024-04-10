@@ -147,12 +147,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     let cleanText = zoomText.innerText.replace(/\D/g, '');
     if (cleanText !== zoomText.innerText) {
       zoomText.blur();
-      // TODO: set custom zoom value
     }
     if (cleanText.length > 0) 
       zoomText.textContent = cleanText;
     else
       updateZoomText();
+
+    let newZoomStep = 0;
+    for (let i = 0; i < zoomSteps.length; i++) // Should initZoom be refactored to handle this too?
+      if (zoomText.textContent / 100 >= zoomSteps[i])
+        newZoomStep = i;
+    zoomStep = newZoomStep;
+    
+    img.style.width = img.naturalWidth * (zoomText.textContent / 100) + 'px'
+    img.style.height = img.naturalHeight * (zoomText.textContent / 100) + 'px';
   });
 
   zoomText.addEventListener('click', () => {
