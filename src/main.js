@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const viewport = document.getElementById('viewport');
   const zoomText = document.getElementById('zoom-text');
   const zoomTextSymbol = document.getElementById('zoom-text-symbol');
+  const zoomTextGrid = document.getElementById('zoom-text-grid');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -75,11 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   viewport.addEventListener('wheel', (e) => {
-    if (img.src === '') return;
-    if (e.deltaY < 0) // scroll up
-        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
-    else
-        zoomStep = Math.max(zoomStep - 1, 0);
+    stepZoom(e);
 
     const marginLeft = parseInt(img.style.marginLeft) || 0;
     const marginTop = parseInt(img.style.marginTop) || 0;
@@ -142,6 +139,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   viewport.addEventListener('dblclick', () => {
     center(img);
   });
+
+  zoomTextGrid.addEventListener('wheel', (e) => {
+    stepZoom(e);
+    updateZoomText();
+    
+    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
+    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
+  });
+
+  function stepZoom(e) {
+    if (img.src === '') return;
+    if (e.deltaY < 0) // scroll up
+        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+    else
+        zoomStep = Math.max(zoomStep - 1, 0);
+  }
 
   zoomText.addEventListener('input', () => {
     let cleanText = zoomText.innerText.replace(/\D/g, '');
