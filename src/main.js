@@ -97,8 +97,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     img.style.marginLeft = clamp(marginLeft - offsetX, -img.clientWidth/2, img.clientWidth/2) + 'px';
     img.style.marginTop = clamp(marginTop - offsetY, -img.clientHeight/2, img.clientHeight/2) + 'px';
-
-    updateZoomText();
 });
 
   await listen('tauri://file-drop', (e) => {
@@ -144,7 +142,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   zoomTextGrid.addEventListener('wheel', (e) => {
     stepZoom(e.deltaY);
-    updateZoomText();
     // TODO: Set the margin ? 
     img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
     img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
@@ -170,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     img.style.height = img.naturalHeight * (zoomText.textContent / 100) + 'px';
   });
 
-  zoomText.addEventListener('click', () => {
+  zoomText.addEventListener('focus', () => {
     let range = document.createRange();
     range.selectNodeContents(zoomText);
     let selection = window.getSelection();
@@ -182,19 +179,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.getSelection().removeAllRanges();
   });
 
-  zoomInButton.addEventListener('click', () => {
-    stepZoom(-1);
-    updateZoomText();
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey) {
+      if (e.key === '=')
+        stepZoom(-1);
+      else if (e.key === '-')
+        stepZoom(0);
+    }
+    else if (e.key === 'z') {
+      zoomText.blur();
+      zoomText.focus();
+      e.preventDefault();
+    }
     img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
     img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
   });
 
-  zoomOutButton.addEventListener('click', () => {
-    stepZoom(0);
-    updateZoomText();
-    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
-    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
-  });
 
   function initZoom(imgLength, viewportLength) {
     for (let i = 0; i < zoomSteps.length; i++)
@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
     else
         zoomStep = Math.max(zoomStep - 1, 0);
+    updateZoomText();
   }
 
 });

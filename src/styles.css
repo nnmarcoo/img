@@ -53,7 +53,7 @@ button:hover {
   z-index: 1;
   display: grid;
   grid-template-rows: 100%;
-  grid-template-columns: 45px 30px 30px 30px 30px;
+  grid-template-columns: 45px 30px 30px;
   margin-right: 5px;
   gap: 5px;
 }
