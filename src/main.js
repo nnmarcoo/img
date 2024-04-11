@@ -7,6 +7,8 @@ const { listen } = window.__TAURI__.event;
 // TODO: Initializing image size doesn't quite work
 // TODO: If mouse isn't in the image, zoom towards center?
 // TODO: Refactor so it does all the image setup and zoom text when the src changes
+// TODO: Handle multiple objects in viewport
+// Should elements that are only referenced once not be saved as const?
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -17,8 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomText = document.getElementById('zoom-text');
   const zoomTextSymbol = document.getElementById('zoom-text-symbol');
   const zoomTextGrid = document.getElementById('zoom-text-grid');
-  const zoomInButton = document.getElementById('zoom-in-button');
-  const zoomOutButton = document.getElementById('zoom-out-button');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -32,75 +32,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   fileSelect.addEventListener('click', selectFile);
 
-  function initImageSize() {
-    const aspectRatio = img.naturalWidth / img.naturalHeight;
-    center(img);
-
-    if (img.naturalWidth > img.naturalHeight) {
-      initZoom(img.naturalWidth, viewport.clientWidth);
-      img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
-      img.style.height = img.clientWidth / aspectRatio + 'px';
-    }
-    else {
-      initZoom(img.naturalHeight, viewport.clientHeight);
-      img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
-      img.style.width = img.clientHeight * aspectRatio + 'px';
-    }
-    updateZoomText();
-  }
-
-  function setImage(file) {
-    hide(img);
-    if (img.src === '')
-      fileSelect.style.display = 'none';
-
-    img.src = convertFileSrc(file);
-    invoke('set_image_path', {path: file});  
-  }
-
-  img.onload = () => {
-    initImageSize();
-  }
-
-  async function selectFile() {
-    const selected = await open({
-      multiple: false,
-      filters: [{
-        name: 'Image',
-        extensions: imgTypes
-        }]
-    })
-
-    if (selected !== null) {
-      setImage(selected);
-      fileSelect.removeEventListener('click', selectFile);
-    }
-  }
-
   viewport.addEventListener('wheel', (e) => {
-    stepZoom(e.deltaY);
+    if (img.src === '') return;
+
+    const prevWidth = img.clientWidth;
+    const prevHeight = img.clientHeight;
+
+    if (e.deltaY < 0) // scroll up
+        var [newWidth, newHeight] = zoomIn();
+    else
+        var [newWidth, newHeight] = zoomOut();
 
     const marginLeft = parseInt(img.style.marginLeft) || 0;
     const marginTop = parseInt(img.style.marginTop) || 0;
 
-    const width = img.naturalWidth * zoomSteps[zoomStep];
-    const height = img.naturalHeight * zoomSteps[zoomStep];
+    const dWidth = newWidth - prevWidth;
+    const dHeight = newHeight - prevHeight;
 
-    const dWidth = width - img.clientWidth;
-    const dHeight = height - img.clientHeight;
+    const offsetX = Math.round((e.clientX - img.offsetLeft) * dWidth / prevWidth);
+    const offsetY = Math.round((e.clientY - img.offsetTop) * dHeight / prevHeight);
 
-    const offsetX = Math.round((e.clientX - img.offsetLeft) * dWidth / img.clientWidth);
-    const offsetY = Math.round((e.clientY - img.offsetTop) * dHeight / img.clientHeight);
-
-    img.style.width =  width + 'px';
-    img.style.height =  height + 'px';
-
-    img.style.marginLeft = clamp(marginLeft - offsetX, -img.clientWidth/2, img.clientWidth/2) + 'px';
+    img.style.marginLeft = clamp(marginLeft - offsetX, -img.clientWidth/2, img.clientWidth/2) + 'px'; // Could these be shortened
     img.style.marginTop = clamp(marginTop - offsetY, -img.clientHeight/2, img.clientHeight/2) + 'px';
-});
+  });
 
   await listen('tauri://file-drop', (e) => {
-    let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1);
+    let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
     if (imgTypes.includes(extension))
       setImage(e.payload[0]);
   });
@@ -110,11 +67,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (document.body.style.cursor !== 'grabbing')
       document.body.style.cursor = 'grabbing';
 
-    let marginLeft = parseInt(img.style.marginLeft) || 0;
-    let marginTop = parseInt(img.style.marginTop) || 0;
-
-    let newMarginLeft = marginLeft + (e.clientX - prevX);
-    let newMarginTop = marginTop + (e.clientY - prevY);
+    let newMarginLeft = (parseInt(img.style.marginLeft) || 0) + (e.clientX - prevX);
+    let newMarginTop = (parseInt(img.style.marginTop) || 0) + (e.clientY - prevY);
   
     img.style.marginLeft = clamp(newMarginLeft, -img.clientWidth/2, img.clientWidth/2) + 'px';
     img.style.marginTop = clamp(newMarginTop, -img.clientHeight/2, img.clientHeight/2) + 'px';
@@ -140,31 +94,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     center(img);
   });
 
-  zoomTextGrid.addEventListener('wheel', (e) => {
-    stepZoom(e.deltaY);
-    // TODO: Set the margin ? 
-    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
-    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
+  zoomTextGrid.addEventListener('wheel', (e) => { // Should I also set the margin?
+    if (e.deltaY < 0) // scroll up
+        zoomIn();
+    else
+        zoomOut();
   });
 
   zoomText.addEventListener('input', () => {
     let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
-    if (cleanText !== zoomText.innerText) {
+    if (cleanText !== zoomText.innerText)
       zoomText.blur();
-    }
     if (cleanText.length > 0) 
-      zoomText.textContent = cleanText;
+      updateZoomText(cleanText);
     else
-      updateZoomText();
+      updateZoomText(zoomSteps[zoomStep] * 100);
 
     let newZoomStep = 0;
-    for (let i = 0; i < zoomSteps.length; i++) // Should initZoom be refactored to handle this too?
+    for (let i = 0; i < zoomSteps.length; i++)
       if (zoomText.textContent / 100 >= zoomSteps[i])
         newZoomStep = i;
     zoomStep = newZoomStep;
-    
-    img.style.width = img.naturalWidth * (zoomText.textContent / 100) + 'px'
-    img.style.height = img.naturalHeight * (zoomText.textContent / 100) + 'px';
+
+    zoomCustom(zoomText.textContent / 100);
   });
 
   zoomText.addEventListener('focus', () => {
@@ -180,28 +132,67 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.addEventListener('keydown', (e) => {
+    if (img.src === '') return;
     if (e.ctrlKey) {
       if (e.key === '=')
-        stepZoom(-1);
+        zoomIn();
       else if (e.key === '-')
-        stepZoom(0);
+        zoomOut();
     }
     else if (e.key === 'z') {
       zoomText.blur();
       zoomText.focus();
       e.preventDefault();
     }
-    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
-    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
   });
 
+  img.onload = () => {
+    fileSelect.style.display = 'none';
+    zoomTextSymbol.textContent = '%';
+    fileSelect.removeEventListener('click', selectFile);
+    initImage();
+  }
+
+  function setImage(file) {
+    hide(img);
+    img.src = convertFileSrc(file);
+    invoke('set_image_path', {path: file});  
+  }
+
+  function initImage() {
+    center(img);
+
+    if (img.naturalWidth > img.naturalHeight) 
+      initZoom(img.naturalWidth, viewport.clientWidth);
+    else 
+      initZoom(img.naturalHeight, viewport.clientHeight);
+    updateZoomText(zoomSteps[zoomStep] * 100);
+  }
+
+  async function selectFile() {
+    const selected = await open({
+      multiple: false,
+      filters: [{
+        name: 'Image',
+        extensions: imgTypes
+        }]
+    })
+
+    if (selected !== null)
+      setImage(selected);
+  }
 
   function initZoom(imgLength, viewportLength) {
     for (let i = 0; i < zoomSteps.length; i++)
       if (imgLength * zoomSteps[i] > viewportLength * .8) {
         zoomStep = clamp(i-1, 0, zoomSteps.length - 1);
-        return;
+        break;
       }
+      zoomCustom(zoomSteps[zoomStep]);
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
   function hide(e) {
@@ -209,27 +200,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.style.height = '0px';
   }
 
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
   function center(e) {
     e.style.marginLeft = '0px';
     e.style.marginTop = '0px';
   }
 
-  function updateZoomText() {
-    zoomTextSymbol.textContent = '%';
-    zoomText.textContent = zoomSteps[zoomStep] * 100;
+  function updateZoomText(text) {
+    zoomText.textContent = text;
   }
 
-  function stepZoom(e) {
-    if (img.src === '') return;
-    if (e < 0) // scroll up
-        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
-    else
-        zoomStep = Math.max(zoomStep - 1, 0);
-    updateZoomText();
+  function zoomIn() {
+    zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+    zoomCustom(zoomSteps[zoomStep]);
+    updateZoomText(zoomSteps[zoomStep] * 100);
+    return [img.clientWidth, img.clientHeight];
+  }
+
+  function zoomOut() {
+    zoomStep = Math.max(zoomStep - 1, 0);
+    zoomCustom(zoomSteps[zoomStep]);
+    updateZoomText(zoomSteps[zoomStep] * 100);
+    return [img.clientWidth, img.clientHeight];
+  }
+
+  function zoomCustom(percent) {
+    img.style.width = img.naturalWidth * percent + 'px';
+    img.style.height = img.naturalHeight * percent + 'px';
   }
 
 });
