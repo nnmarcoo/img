@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomText = document.getElementById('zoom-text');
   const zoomTextSymbol = document.getElementById('zoom-text-symbol');
   const zoomTextGrid = document.getElementById('zoom-text-grid');
+  const zoomInButton = document.getElementById('zoom-in-button');
+  const zoomOutButton = document.getElementById('zoom-out-button');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   viewport.addEventListener('wheel', (e) => {
-    stepZoom(e);
+    stepZoom(e.deltaY);
 
     const marginLeft = parseInt(img.style.marginLeft) || 0;
     const marginTop = parseInt(img.style.marginTop) || 0;
@@ -141,20 +143,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   zoomTextGrid.addEventListener('wheel', (e) => {
-    stepZoom(e);
+    stepZoom(e.deltaY);
     updateZoomText();
-    
+    // TODO: Set the margin ? 
     img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
     img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
   });
-
-  function stepZoom(e) {
-    if (img.src === '') return;
-    if (e.deltaY < 0) // scroll up
-        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
-    else
-        zoomStep = Math.max(zoomStep - 1, 0);
-  }
 
   zoomText.addEventListener('input', () => {
     let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
@@ -188,6 +182,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.getSelection().removeAllRanges();
   });
 
+  zoomInButton.addEventListener('click', () => {
+    stepZoom(-1);
+    updateZoomText();
+    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
+    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
+  });
+
+  zoomOutButton.addEventListener('click', () => {
+    stepZoom(0);
+    updateZoomText();
+    img.style.width = img.naturalWidth * zoomSteps[zoomStep] + 'px';
+    img.style.height = img.naturalHeight * zoomSteps[zoomStep] + 'px';
+  });
+
   function initZoom(imgLength, viewportLength) {
     for (let i = 0; i < zoomSteps.length; i++)
       if (imgLength * zoomSteps[i] > viewportLength * .8) {
@@ -213,6 +221,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateZoomText() {
     zoomTextSymbol.textContent = '%';
     zoomText.textContent = zoomSteps[zoomStep] * 100;
+  }
+
+  function stepZoom(e) {
+    if (img.src === '') return;
+    if (e < 0) // scroll up
+        zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+    else
+        zoomStep = Math.max(zoomStep - 1, 0);
   }
 
 });
