@@ -146,12 +146,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  img.onload = () => {
+  img.addEventListener('load', () => {
     fileSelect.style.display = 'none';
     zoomTextSymbol.textContent = '%';
     fileSelect.removeEventListener('click', selectFile);
     initImage();
-  }
+  });
 
   function setImage(file) {
     hide(img);
