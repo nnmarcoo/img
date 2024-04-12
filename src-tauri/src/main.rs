@@ -16,6 +16,7 @@ fn show_window(window: tauri::Window) {
 fn set_image_path(path: String) {
     unsafe {
         IMAGE_PATH = path;
+        //println!("{}", IMAGE_PATH);
     }
 }
 
