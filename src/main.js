@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setImage(file) {
     hide(img);
     img.src = convertFileSrc(file);
-    invoke('set_image_path', {path: file});  
+    invoke('set_image_path', {path: file});
   }
 
   function initImage() {

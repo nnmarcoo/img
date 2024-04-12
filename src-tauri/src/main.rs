@@ -4,6 +4,7 @@
 use std::env;
 use std::fs::File;
 use std::io::Read;
+use base64::{engine::general_purpose, Engine as _};
 
 static mut IMAGE_PATH: String = String::new();
 
@@ -21,11 +22,11 @@ fn set_image_path(path: String) {
 }
 
 #[tauri::command]
-fn read_image(path: String) -> Vec<u8> {
+fn read_image(path: String) -> String {
     let mut file = File::open(path).unwrap();
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer).unwrap();
-    buffer
+    return general_purpose::STANDARD.encode(&buffer);
 }
 
 fn main() {
