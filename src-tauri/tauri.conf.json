@@ -32,7 +32,8 @@
         "width": 1000,
         "height": 750,
         "fileDropEnabled": true,
-        "visible": false
+        "visible": false,
+        "center": true
       }
     ],
     "security": {
