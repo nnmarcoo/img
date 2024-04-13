@@ -93,6 +93,7 @@ button:hover {
   grid-row: 1 / 2;
   grid-column: 1 / 2;
   overflow: hidden;
+  background-color: #222831;
 }
 
 #file-select {
