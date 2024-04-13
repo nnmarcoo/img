@@ -29,6 +29,7 @@
     "windows": [
       {
         "title": "img",
+        "label": "img",
         "width": 1000,
         "height": 750,
         "fileDropEnabled": true,
@@ -49,7 +50,13 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "windows": {
+        "wix": {
+					"template": "msi/msi.wxs",
+          "language": "en-US"
+				}
+      }
     }
   }
 }
