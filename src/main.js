@@ -145,13 +145,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       zoomText.focus();
       e.preventDefault();
     }
+    else if (e.key === 'r')
+      toggleRenderMode();
   });
 
   document.addEventListener('mousedown', (e) => {
-    if (e.button === 1) {
-      img.style.imageRendering =  img.style.imageRendering === 'pixelated' ? 'auto' : 'pixelated';
-    }
+    if (e.button === 1) 
+      toggleRenderMode();
   });
+
+  function toggleRenderMode() {
+      img.style.imageRendering =  img.style.imageRendering === 'pixelated' ? 'auto' : 'pixelated';
+  }
 
   img.addEventListener('load', () => {
     fileSelect.style.display = 'none';
