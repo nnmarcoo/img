@@ -4,7 +4,6 @@ const { listen } = window.__TAURI__.event;
 
 // REMINDER: Remove dormant event handlers
 // TODO: Minify with esbuild
-// TODO: Initializing image size doesn't quite work
 // TODO: If mouse isn't in the image, zoom towards center?
 // TODO: Scrolling over zoom text should care about margins?
 // TODO: Handle multiple objects in viewport
@@ -112,12 +111,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     else
       updateZoomText(zoomSteps[zoomStep] * 100);
 
-    let newZoomStep = 0;
-    for (let i = 0; i < zoomSteps.length; i++)
-      if (zoomText.textContent / 100 >= zoomSteps[i])
-        newZoomStep = i;
-    zoomStep = newZoomStep;
-
     zoomCustom(zoomText.textContent / 100);
   });
 
@@ -148,6 +141,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     else if (e.key === 'r')
       toggleRenderMode();
+    else if (e.key === 'f')
+      fitToViewport();
   });
 
   document.addEventListener('mousedown', (e) => {
@@ -170,11 +165,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function initImage() {
     center(img);
+    let zoom = getFitZoom();
 
-    if (img.naturalWidth > img.naturalHeight) 
-      initZoom(img.naturalWidth, viewport.clientWidth);
-    else 
-      initZoom(img.naturalHeight, viewport.clientHeight);
+    for (let i = 0; i < zoomSteps.length; i++) {
+      if (zoomSteps[i] >= zoom) {
+        zoomStep = clamp(i-1, 0, zoomSteps.length - 1);
+        break;
+      }
+    }
+    zoomCustom(zoomSteps[zoomStep]);
     updateZoomText(zoomSteps[zoomStep] * 100);
   }
 
@@ -191,15 +190,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       setImage(selected);
   }
 
-  function initZoom(imgLength, viewportLength) {
-    for (let i = 0; i < zoomSteps.length; i++)
-      if (imgLength * zoomSteps[i] > viewportLength * .8) {
-        zoomStep = clamp(i-1, 0, zoomSteps.length - 1);
-        break;
-      }
-      zoomCustom(zoomSteps[zoomStep]);
-  }
-
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
   }
@@ -212,6 +202,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   function center(e) {
     e.style.marginLeft = '0px';
     e.style.marginTop = '0px';
+  }
+
+  function fitToViewport() {
+    let zoom = getFitZoom();
+    center(img);
+    zoomCustom(zoom);
+    updateZoomText(Math.round(zoom * 100));
+  }
+
+  function getFitZoom() {
+    let scaleWidth = viewport.clientWidth / img.naturalWidth;
+    let scaleHeight = viewport.clientHeight / img.naturalHeight;
+    return Math.min(scaleWidth, scaleHeight);
   }
 
   function updateZoomText(text) {
@@ -235,6 +238,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   function zoomCustom(percent) {
     img.style.width = img.naturalWidth * percent + 'px';
     img.style.height = img.naturalHeight * percent + 'px';
+
+    if (!zoomSteps.includes(percent)) {
+      let newZoomStep = 0;
+      for (let i = 0; i < zoomSteps.length; i++)
+        if (percent >= zoomSteps[i])
+          newZoomStep = i;
+      zoomStep = newZoomStep;
+    }
   }
 
   function toggleRenderMode() {
