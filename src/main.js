@@ -6,9 +6,10 @@ const { listen } = window.__TAURI__.event;
 // TODO: Minify with esbuild
 // TODO: Initializing image size doesn't quite work
 // TODO: If mouse isn't in the image, zoom towards center?
-// TODO: Refactor so it does all the image setup and zoom text when the src changes
+// TODO: Scrolling over zoom text should care about margins?
 // TODO: Handle multiple objects in viewport
 // Should elements that are only referenced once not be saved as const?
+// TODO: Loading bar when image is importing?
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -154,10 +155,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       toggleRenderMode();
   });
 
-  function toggleRenderMode() {
-      img.style.imageRendering =  img.style.imageRendering === 'pixelated' ? 'auto' : 'pixelated';
-  }
-
   img.addEventListener('load', () => {
     fileSelect.style.display = 'none';
     zoomTextSymbol.textContent = '%';
@@ -238,6 +235,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function zoomCustom(percent) {
     img.style.width = img.naturalWidth * percent + 'px';
     img.style.height = img.naturalHeight * percent + 'px';
+  }
+
+  function toggleRenderMode() {
+    img.style.imageRendering =  img.style.imageRendering === 'pixelated' ? 'auto' : 'pixelated';
   }
 
 });
