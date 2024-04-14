@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let zoomStep = 0;
 
   fileSelect.addEventListener('click', selectFile);
+  img.style.imageRendering = 'pixelated';
 
   viewport.addEventListener('wheel', (e) => {
     if (img.src === '') return;
@@ -143,6 +144,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       zoomText.blur();
       zoomText.focus();
       e.preventDefault();
+    }
+  });
+
+  document.addEventListener('mousedown', (e) => {
+    if (e.button === 1) {
+      img.style.imageRendering =  img.style.imageRendering === 'pixelated' ? 'auto' : 'pixelated';
     }
   });
 
