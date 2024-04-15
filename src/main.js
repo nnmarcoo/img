@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   prevImage.addEventListener('click', async () => {
-    setImage(await invoke('prev-image'));
+    setImage(await invoke('prev_image'));
   });
 
   viewport.addEventListener('wheel', (e) => {
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.getSelection().removeAllRanges();
   });
 
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', async (e) => {
     if (img.src === '') return;
     if (e.ctrlKey) {
       if (e.key === '=')
@@ -155,6 +155,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       fitToViewport();
     else if (e.key === 'c')
       center(img);
+    else if (e.key === 'ArrowRight')
+      setImage(await invoke('next_image'))
+    else if (e.key === 'ArrowLeft')
+      setImage(await invoke('prev_image'))
   });
 
   document.addEventListener('mousedown', (e) => {

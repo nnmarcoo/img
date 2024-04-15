@@ -7,7 +7,7 @@ use std::env;
 use std::fs::File;
 use std::io::Read;
 use base64::{engine::general_purpose, Engine as _};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::fs;
 
 lazy_static! {
@@ -32,50 +32,36 @@ fn set_image_path(path: String) {
 }
 
 #[tauri::command]
-fn next_image() -> String { // this is so bad lol
-    let image_path_str: &str = &*IMAGE_PATH.lock().unwrap();
-    let mut find_next = false;
-    let path = Path::new(image_path_str);
-
-    if let Some(parent_dir) = path.parent() {
-        for entry in fs::read_dir(parent_dir).unwrap() {
-            let entry = entry.unwrap();
-            let entry_path = entry.path();
-            if !entry_path.is_file() { continue; }
-
-            let entry_ext = entry_path.extension();
-            let entry_ext_str = entry_ext.unwrap().to_string_lossy().to_string();
-            let entry_path_str = entry_path.to_string_lossy().to_string();
-            if entry_path_str == image_path_str {
-                find_next = true;
-            }
-            else if find_next == true {
-                if IMAGE_TYPES.contains(&entry_ext_str) {
-                    return entry_path_str;
-                }
-            }
-        }
-    }
-    if let Some(parent_dir) = path.parent() {
-        for entry in fs::read_dir(parent_dir).unwrap() {
-            let entry = entry.unwrap();
-            let entry_path = entry.path();
-            if !entry_path.is_file() { continue; }
-
-            let entry_ext = entry_path.extension();
-            let entry_ext_str = entry_ext.unwrap().to_string_lossy().to_string();
-            let entry_path_str = entry_path.to_string_lossy().to_string();
-                if IMAGE_TYPES.contains(&entry_ext_str) {
-                    return entry_path_str;
-                }
-            }
-    }
-    return String::from("");
+fn next_image() -> String {
+    let (path_i, files) = images_in_current_directory();
+    if path_i.unwrap() == files.len()-1 { return files[0].to_string_lossy().to_string(); }
+    return files[path_i.unwrap()+1].to_string_lossy().to_string();
 }
 
 #[tauri::command]
-fn prev_image() {
-    // TODO
+fn prev_image() -> String{
+    let (path_i, files) = images_in_current_directory();
+    if path_i.unwrap() == 0 { return files[files.len()-1].to_string_lossy().to_string(); }
+    return files[path_i.unwrap()-1].to_string_lossy().to_string();
+}
+
+fn images_in_current_directory() -> (Option<usize>, Vec<PathBuf>) {
+    let image_path_str: &str = &*IMAGE_PATH.lock().unwrap();
+    let path = Path::new(image_path_str);
+    let mut files: Vec<PathBuf> = Vec::new();
+    let mut path_i: Option<usize> = None;
+
+    if let Some(parent_dir) = path.parent() {
+        for file in fs::read_dir(parent_dir).unwrap() {
+            let file = file.unwrap().path();
+            if !file.is_file() { continue; }
+            let ext = file.extension().unwrap().to_string_lossy().to_string();
+            if !IMAGE_TYPES.contains(&ext) { continue; }
+            files.push(file.clone());
+            if file == path { path_i = Some(files.len()-1); }
+        }
+    }
+    return (path_i, files);
 }
 
 #[tauri::command]
