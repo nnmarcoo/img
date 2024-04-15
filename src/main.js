@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomText = document.getElementById('zoom-text');
   const zoomTextSymbol = document.getElementById('zoom-text-symbol');
   const zoomTextGrid = document.getElementById('zoom-text-grid');
+  const nextImage = document.getElementById('next-image');
+  const prevImage = document.getElementById('prev-image');
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
 
   let prevX = 0, prevY = 0;
@@ -32,6 +34,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   fileSelect.addEventListener('click', selectFile);
   img.style.imageRendering = 'pixelated';
+
+  nextImage.addEventListener('click', async () => {
+    const path = await invoke('next_image');
+    console.log(path);
+    setImage(path);
+  });
+
+  prevImage.addEventListener('click', () => {
+    // TODO
+  });
 
   viewport.addEventListener('wheel', (e) => {
     if (img.src === '') return;
@@ -162,7 +174,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     hide(img);
     img.src = convertFileSrc(file);
     invoke('set_image_path', {path: file});
-    invoke('next_image');
   }
 
   function initImage() {
