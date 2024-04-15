@@ -28,10 +28,12 @@ button {
   transition-duration: 0.2s;
   cursor: pointer;
   border-radius: 3px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 button:hover {
   background-color: #EEEEEE;
+  color: #31363F;
 }
 
 /* darkest
@@ -41,7 +43,6 @@ button:hover {
  #EEEEEE
    lightest
 */
-
 
 #main-grid {
   display: grid;
@@ -101,7 +102,7 @@ button:hover {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  position: absolute;
+  position: relative;
   top: calc(50% - 15px);
   left: 50%;
   transform: translate(-50%, -50%);

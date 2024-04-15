@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateZoomText(cleanText);
     else
       updateZoomText(zoomSteps[zoomStep] * 100);
-
     zoomCustom(zoomText.textContent / 100);
   });
 
@@ -143,6 +142,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       toggleRenderMode();
     else if (e.key === 'f')
       fitToViewport();
+    else if (e.key === 'c')
+      center(img);
   });
 
   document.addEventListener('mousedown', (e) => {
@@ -161,6 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     hide(img);
     img.src = convertFileSrc(file);
     invoke('set_image_path', {path: file});
+    invoke('next_image');
   }
 
   function initImage() {
@@ -239,13 +241,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     img.style.width = img.naturalWidth * percent + 'px';
     img.style.height = img.naturalHeight * percent + 'px';
 
-    if (!zoomSteps.includes(percent)) {
-      let newZoomStep = 0;
-      for (let i = 0; i < zoomSteps.length; i++)
-        if (percent >= zoomSteps[i])
-          newZoomStep = i;
-      zoomStep = newZoomStep;
-    }
+    // This is stupid
+    let newZoomStep = 0;
+    for (let i = 0; i < zoomSteps.length; i++)
+      if (percent >= zoomSteps[i])
+        newZoomStep = i;
+    zoomStep = newZoomStep;
   }
 
   function toggleRenderMode() {

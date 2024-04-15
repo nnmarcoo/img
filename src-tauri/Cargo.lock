@@ -1268,6 +1268,7 @@ name = "img"
 version = "0.4.3"
 dependencies = [
  "base64 0.22.0",
+ "lazy_static",
  "serde",
  "serde_json",
  "tauri",
