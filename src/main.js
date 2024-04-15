@@ -151,8 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       zoomText.focus();
       e.preventDefault();
     }
-    else if (e.key === 'r')
-      toggleRenderMode();
     else if (e.key === 'f')
       fitToViewport();
     else if (e.key === 'c')
