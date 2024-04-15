@@ -37,10 +37,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   img.style.imageRendering = 'pixelated';
 
   nextImage.addEventListener('click', async () => {
+    if (img.src === '') return;
     setImage(await invoke('next_image'));
   });
 
   prevImage.addEventListener('click', async () => {
+    if (img.src === '') return;
     setImage(await invoke('prev_image'));
   });
 

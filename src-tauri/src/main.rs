@@ -55,7 +55,7 @@ fn images_in_current_directory() -> (Option<usize>, Vec<PathBuf>) {
         for file in fs::read_dir(parent_dir).unwrap() {
             let file = file.unwrap().path();
             if !file.is_file() { continue; }
-            let ext = file.extension().unwrap().to_string_lossy().to_string();
+            let ext = file.extension().unwrap().to_string_lossy().to_string().to_lowercase();
             if !IMAGE_TYPES.contains(&ext) { continue; }
             files.push(file.clone());
             if file == path { path_i = Some(files.len()-1); }
