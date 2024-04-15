@@ -9,6 +9,7 @@ const { listen } = window.__TAURI__.event;
 // TODO: Handle multiple objects in viewport
 // Should elements that are only referenced once not be saved as const?
 // TODO: Loading bar when image is importing?
+// TODO: Arrow key control next/prev image
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomTextGrid = document.getElementById('zoom-text-grid');
   const nextImage = document.getElementById('next-image');
   const prevImage = document.getElementById('prev-image');
-  const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];
+  const imgTypes = await invoke('get_image_types');
 
   let prevX = 0, prevY = 0;
   let isDragging = false;
@@ -36,13 +37,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   img.style.imageRendering = 'pixelated';
 
   nextImage.addEventListener('click', async () => {
-    const path = await invoke('next_image');
-    console.log(path);
-    setImage(path);
+    setImage(await invoke('next_image'));
   });
 
-  prevImage.addEventListener('click', () => {
-    // TODO
+  prevImage.addEventListener('click', async () => {
+    setImage(await invoke('prev-image'));
   });
 
   viewport.addEventListener('wheel', (e) => {

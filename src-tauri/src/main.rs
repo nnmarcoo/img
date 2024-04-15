@@ -74,6 +74,11 @@ fn next_image() -> String { // this is so bad lol
 }
 
 #[tauri::command]
+fn prev_image() {
+    // TODO
+}
+
+#[tauri::command]
 fn read_image(path: String) -> String {
     let mut file = File::open(path).unwrap();
     let mut buffer = Vec::new();
@@ -81,12 +86,17 @@ fn read_image(path: String) -> String {
     return general_purpose::STANDARD.encode(&buffer);
 }
 
+#[tauri::command]
+fn get_image_types() -> Vec<String> {
+    IMAGE_TYPES.clone()
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     dbg!(args);
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_window, set_image_path, read_image, next_image])
+        .invoke_handler(tauri::generate_handler![show_window, set_image_path, get_image_types, read_image, prev_image, next_image])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }
