@@ -8,8 +8,6 @@ const { listen } = window.__TAURI__.event;
 // TODO: Scrolling over zoom text should care about margins?
 // TODO: Handle multiple objects in viewport
 // Should elements that are only referenced once not be saved as const?
-// TODO: Loading bar when image is importing?
-// TODO: Arrow key control next/prev image
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');

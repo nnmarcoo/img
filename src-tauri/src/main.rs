@@ -17,6 +17,9 @@ lazy_static! {
         String::from("jpeg"),
         String::from("jpg"),
         String::from("webp"),
+        String::from("gif"),
+        String::from("ico"),
+        String::from("svg")
     ];
     static ref IMAGE_PATH: Mutex<String> = Mutex::new(String::new());
 }

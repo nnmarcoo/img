@@ -136,6 +136,21 @@
                         <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
                     </Extension>
                 </ProgId>
+                <ProgId Id="img.gif" Description="gif FA">
+                    <Extension Id="gif" ContentType="image/gif">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id="img.ico" Description="ico FA">
+                    <Extension Id="ico" ContentType="image/ico">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id="img.svg" Description="svg FA">
+                    <Extension Id="svg" ContentType="image/svg">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
 
 
             </Component>
