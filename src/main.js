@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomTextGrid = document.getElementById('zoom-text-grid');
   const nextImage = document.getElementById('next-image');
   const prevImage = document.getElementById('prev-image');
+  const fileSelectText = document.getElementById('file-select-text');
+  const fileIcon = document.getElementById('file-icon');
   const imgTypes = await invoke('get_image_types');
 
   let prevX = 0, prevY = 0;
@@ -179,6 +181,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function setImage(file) {
     hide(img);
+    fileSelect.style.display = 'flex';
+    fileIcon.style.display = 'none';
+    fileSelectText.textContent = 'Loading...';
+
     img.src = convertFileSrc(file);
     invoke('set_image_path', {path: file});
   }

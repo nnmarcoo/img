@@ -10,14 +10,15 @@ use base64::{engine::general_purpose, Engine as _};
 use std::path::{Path, PathBuf};
 use std::fs;
 
+
 lazy_static! {
-    static ref IMAGE_PATH: Mutex<String> = Mutex::new(String::new());
     static ref IMAGE_TYPES: Vec<String> = vec![
         String::from("png"),
         String::from("jpeg"),
         String::from("jpg"),
         String::from("webp"),
     ];
+    static ref IMAGE_PATH: Mutex<String> = Mutex::new(String::new());
 }
 
 #[tauri::command]
@@ -88,7 +89,13 @@ fn main() {
         set_image_path(args[1].to_string());
     }
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_window, set_image_path, get_image_types, get_image_path, read_image, prev_image, next_image])
+        .invoke_handler(tauri::generate_handler![show_window, 
+                                                 set_image_path, 
+                                                 get_image_types, 
+                                                 get_image_path, 
+                                                 read_image, 
+                                                 prev_image, 
+                                                 next_image])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }
