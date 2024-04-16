@@ -1,6 +1,6 @@
 [package]
 name = "img"
-version = "0.4.4"
+version = "0.0.0"
 description = "img"
 authors = ["Marco Todorov"]
 edition = "2021"
@@ -11,7 +11,7 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "protocol-asset", "shell-open", "dialog-open", "path-all"] }
+tauri = { version = "1", features = [ "protocol-asset", "shell-open", "path-all", "dialog-open"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22.0"

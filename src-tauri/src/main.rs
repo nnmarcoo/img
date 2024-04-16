@@ -77,12 +77,18 @@ fn get_image_types() -> Vec<String> {
     IMAGE_TYPES.clone()
 }
 
+#[tauri::command]
+fn get_image_path() -> String {
+    IMAGE_PATH.lock().unwrap().clone()
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
-    dbg!(args);
-
+    if args.len() > 1 {
+        set_image_path(args[1].to_string());
+    }
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![show_window, set_image_path, get_image_types, read_image, prev_image, next_image])
+        .invoke_handler(tauri::generate_handler![show_window, set_image_path, get_image_types, get_image_path, read_image, prev_image, next_image])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }

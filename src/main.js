@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                       10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
   let zoomStep = 0;
 
+  let initPath = await invoke('get_image_path');
+  if (initPath !== '')
+    setImage(initPath);
+
   fileSelect.addEventListener('click', selectFile);
   img.style.imageRendering = 'pixelated';
 

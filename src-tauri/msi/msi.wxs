@@ -114,6 +114,30 @@
             </Component>
             <Component Id="Path" Guid="{{path_component_guid}}" Win64="$(var.Win64)">
                 <File Id="Path" Source="{{app_exe_source}}" KeyPath="yes" Checksum="yes"/>
+
+                <!-- File Association-->
+                <ProgId Id="img.png" Description="png FA">
+                    <Extension Id="png" ContentType="image/png">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id="img.jpg" Description="jpg FA">
+                    <Extension Id="jpg" ContentType="image/jpg">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id="img.jpeg" Description="jpeg FA">
+                    <Extension Id="jpeg" ContentType="image/jpeg">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id="img.webp" Description="webp FA">
+                    <Extension Id="webp" ContentType="image/webp">
+                        <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+
+
             </Component>
             {{#each binaries as |bin| ~}}
             <Component Id="{{ bin.id }}" Guid="{{bin.guid}}" Win64="$(var.Win64)">
