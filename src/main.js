@@ -151,6 +151,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         zoomIn();
       else if (e.key === '-')
         zoomOut();
+      else if (e.key === 'r')
+        e.preventDefault();
     }
     else if (e.key === 'z') {
       zoomText.blur();
@@ -165,6 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       setImage(await invoke('next_image'))
     else if (e.key === 'ArrowLeft')
       setImage(await invoke('prev_image'))
+    else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
+      e.preventDefault();
+  
   });
 
   document.addEventListener('mousedown', (e) => {
@@ -177,6 +182,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     zoomTextSymbol.textContent = '%';
     fileSelect.removeEventListener('click', selectFile);
     initImage();
+  });
+
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
   });
 
   function setImage(file) {
