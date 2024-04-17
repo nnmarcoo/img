@@ -3,4 +3,6 @@
   <br />
   img
 </h1>
-A Lightweight image viewer made with [Tauri](https://tauri.app/)
+<h2 align="center">
+  A lightweight image viewer made with <a href= "https://tauri.app">Tauri</a>.
+</h2>
