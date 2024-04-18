@@ -8,6 +8,7 @@ const { listen } = window.__TAURI__.event;
 // TODO: Scrolling over zoom text should care about margins?
 // TODO: Handle multiple objects in viewport
 // Should elements that are only referenced once not be saved as const?
+// BUG: If image is deleted while being viewed, rust crashes
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');

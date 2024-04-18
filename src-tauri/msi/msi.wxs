@@ -151,8 +151,6 @@
                         <Verb Id="open" Command="Open" Target="[!Path]" Argument='"%1"' />
                     </Extension>
                 </ProgId>
-
-
             </Component>
             {{#each binaries as |bin| ~}}
             <Component Id="{{ bin.id }}" Guid="{{bin.guid}}" Win64="$(var.Win64)">
@@ -277,6 +275,9 @@
             <MergeRef Id="{{ id }}"/>
             {{/each~}}
         </Feature>
+
+        <WixVariable Id='WixUIBannerBmp' Value='..\..\..\..\msi\msi-banner.bmp'/>
+		<WixVariable Id='WixUIDialogBmp' Value='..\..\..\..\msi\msi.bmp'/>
 
         {{#if install_webview}}
         <!-- WebView2 -->
