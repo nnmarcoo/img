@@ -9,7 +9,7 @@ use std::io::Read;
 use base64::{engine::general_purpose, Engine as _};
 use std::path::{Path, PathBuf};
 use std::fs;
-
+use image::DynamicImage;
 
 lazy_static! {
     static ref IMAGE_TYPES: Vec<String> = vec![
@@ -22,6 +22,7 @@ lazy_static! {
         String::from("svg")
     ];
     static ref IMAGE_PATH: Mutex<String> = Mutex::new(String::new());
+    static ref IMAGE_DATA: Mutex<Option<DynamicImage>> = Mutex::new(None);
 }
 
 #[tauri::command]
