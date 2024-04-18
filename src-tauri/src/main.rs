@@ -66,6 +66,7 @@ fn images_in_current_directory() -> (Option<usize>, Vec<PathBuf>) {
             if file == path { path_i = Some(files.len()-1); }
         }
     }
+    if path_i == None {path_i = Some(0); }
     return (path_i, files);
 }
 
