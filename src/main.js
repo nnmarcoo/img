@@ -27,7 +27,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     viewport.height = viewport.parentElement.offsetHeight - 30;
   }
 
-  
-
-
 });
