@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   img.addEventListener('load', () => {
-    c.drawImage(img, 50, 50, 100, 100);
+    c.drawImage(img, 50, 50);
   });
 
   function setCanvasSize() {
