@@ -1,7 +1,7 @@
 const { invoke, convertFileSrc } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
 const { listen } = window.__TAURI__.event;
-import Viewport from './Viewport.js';
+import Viewport from './viewport.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
