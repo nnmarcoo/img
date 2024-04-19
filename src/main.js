@@ -188,13 +188,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   function setImage(file) {
+    invoke('set_image_path', {path: file});
+    
     hide(img);
     fileSelect.style.display = 'flex';
     fileIcon.style.display = 'none';
     fileSelectText.textContent = 'Loading...';
 
     img.src = convertFileSrc(file);
-    invoke('set_image_path', {path: file});
   }
 
   function initImage() {
