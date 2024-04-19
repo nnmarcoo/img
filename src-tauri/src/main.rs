@@ -9,8 +9,6 @@ use std::io::Read;
 use base64::{engine::general_purpose, Engine as _};
 use std::path::{Path, PathBuf};
 use std::fs;
-use image::DynamicImage;
-use std::thread;
 
 lazy_static! {
     static ref IMAGE_TYPES: Vec<String> = vec![
@@ -23,7 +21,6 @@ lazy_static! {
         String::from("svg")
     ];
     static ref IMAGE_PATH: Mutex<String> = Mutex::new(String::new());
-    static ref IMAGE_DATA: Mutex<DynamicImage> = Mutex::new(DynamicImage::new_rgba8(0, 0));
 }
 
 #[tauri::command]
@@ -33,12 +30,8 @@ fn show_window(window: tauri::Window) {
 
 #[tauri::command]
 fn set_image_path(path: String) {
-    thread::spawn(move || {
     let mut image_path = IMAGE_PATH.lock().unwrap();
-    let mut image_data = IMAGE_DATA.lock().unwrap();
-    *image_path = path.clone();
-    *image_data = image::open(path).unwrap();
-    });
+    *image_path = path;
 }
 
 #[tauri::command]
