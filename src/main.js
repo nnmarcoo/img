@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
 
   const canvas = document.getElementById('viewport');
-  const ctx = viewport.getContext('2d');
+  const ctx = canvas.getContext('2d');
   const img = new Viewport(ctx);
 
   const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];  
@@ -21,13 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('resize', () => {
     setCanvasSize();
-    img.setCenter(viewport.clientWidth, viewport.clientHeight);
+    img.setCenter(canvas.clientWidth, canvas.clientHeight);
     img.draw();
   });
 
   function setCanvasSize() {
-    viewport.width = viewport.parentElement.offsetWidth;
-    viewport.height = viewport.parentElement.offsetHeight - 30;
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight - 30;
   }
 
 });
