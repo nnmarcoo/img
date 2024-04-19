@@ -1,4 +1,4 @@
-class ViewportImage {
+class Viewport {
   #ctx;
 
   #image;
@@ -41,4 +41,4 @@ class ViewportImage {
     this.#centerY = y/2 - this.#height/2;
   }
 }
-export default ViewportImage;
+export default Viewport;
