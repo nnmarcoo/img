@@ -40,5 +40,6 @@ class Viewport {
     this.#centerX = x/2 - this.#width/2;
     this.#centerY = y/2 - this.#height/2;
   }
+  
 }
 export default Viewport;
