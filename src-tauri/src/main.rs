@@ -37,7 +37,7 @@ fn set_image_path(path: String) {
     let mut image_path = IMAGE_PATH.lock().unwrap();
     let mut image_data = IMAGE_DATA.lock().unwrap();
     *image_path = path.clone();
-    *image_data = image::open(path).unwrap();
+    //*image_data = image::open(path).unwrap();
     });
 }
 
