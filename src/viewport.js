@@ -2,9 +2,9 @@ const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
                       0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
                       2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
                       10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
-  let zoomStep = 0;
+let zoomStep = 0;
 
-class Viewport {
+export default class Viewport {
   #canvas;
   #ctx;
 
@@ -45,10 +45,15 @@ class Viewport {
     this.#ctx.clearRect(this.#centerX + this.#posX, this.#centerY + this.#posY, this.#width, this.#height);
   }
 
-  setCenter() {
-    this.#centerX = canvas.clientWidth/2 - this.#width/2;
-    this.#centerY = canvas.clientHeight/2 - this.#height/2;
+  fillParent() {
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight;
+    this.#setCenter();
+  }
+
+  #setCenter() {
+    this.#centerX = this.#canvas.clientWidth/2 - this.#width/2;
+    this.#centerY = this.#canvas.clientHeight/2 - this.#height/2;
   }
   
 }
-export default Viewport;

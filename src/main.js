@@ -3,29 +3,25 @@ const { open } = window.__TAURI__.dialog;
 const { listen } = window.__TAURI__.event;
 import Viewport from './viewport.js';
 
+
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');
 
-  const canvas = document.getElementById('viewport');
+  const canvas = document.getElementById('canvas');
   const viewport = new Viewport(canvas);
+  const imgTypes = await invoke('get_image_types');
 
-  const imgTypes = ['png', 'jpeg', 'jpg', 'webp'];  
-
-  setCanvasSize();
+  viewport.fillParent();
 
   await listen('tauri://file-drop', (e) => {
-    viewport.setImage(convertFileSrc(e.payload[0]))
+    let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
+    if (imgTypes.includes(extension))
+      viewport.setImage(convertFileSrc(e.payload[0]));
   });
 
   window.addEventListener('resize', () => {
-    setCanvasSize();
-    viewport.setCenter();
+    viewport.fillParent();
     viewport.draw();
   });
-
-  function setCanvasSize() {
-    canvas.width = canvas.parentElement.offsetWidth;
-    canvas.height = canvas.parentElement.offsetHeight - 30;
-  }
 
 });
