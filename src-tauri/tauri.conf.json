@@ -6,7 +6,7 @@
   },
   "package": {
     "productName": "img",
-    "version": "0.4.3"
+    "version": "0.0.2"
   },
   "tauri": {
     "allowlist": {
@@ -29,10 +29,12 @@
     "windows": [
       {
         "title": "img",
+        "label": "img",
         "width": 1000,
         "height": 750,
         "fileDropEnabled": true,
-        "visible": false
+        "visible": false,
+        "center": true
       }
     ],
     "security": {
@@ -48,7 +50,13 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "windows": {
+        "wix": {
+					"template": "msi/msi.wxs",
+          "language": "en-US"
+				}
+      }
     }
   }
 }
