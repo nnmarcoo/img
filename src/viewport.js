@@ -28,8 +28,7 @@ export default class Viewport {
       this.clear();
       this.#width = this.#image.naturalWidth;
       this.#height = this.#image.naturalHeight;
-      this.#posX = 0;
-      this.#posY = 0;
+      this.centerImage();
       this.#centerX = this.#canvas.clientWidth/2 - this.#width/2;
       this.#centerY = this.#canvas.clientHeight/2 - this.#height/2;
       this.draw();
@@ -49,6 +48,11 @@ export default class Viewport {
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight;
     this.#setCenter();
+  }
+
+  centerImage() {
+      this.#posX = 0;
+      this.#posY = 0;
   }
 
   #setCenter() {
