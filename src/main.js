@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
     if (imgTypes.includes(extension))
       viewport.setImage(convertFileSrc(e.payload[0]));
+      canvas.removeEventListener('click', selectFile);
   });
 
   window.addEventListener('resize', () => {

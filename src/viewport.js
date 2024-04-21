@@ -19,15 +19,9 @@ export default class Viewport {
   constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = this.#canvas.getContext('2d');
+    this.#ctx.imageSmoothingEnabled = false;
     this.#image = new Image();
-
-    this.#canvas.addEventListener('click', this.#click.bind(this));
   }
-
-  #click(e) {
-
-  }
-
 
   setImage(image) {
     this.renderLoading();
@@ -43,12 +37,11 @@ export default class Viewport {
   }
 
   draw() {
-    this.#ctx.imageSmoothingEnabled = false;
     if (this.#image.src === '') {
       this.renderFileSelect();
       return;
     }
-    this.#ctx.drawImage(this.#image, this.#centerX + this.#posX, this.#centerY + this.#posY, this.#width, this.#height);
+    this.#ctx.drawImage(this.#image, Math.floor(this.#centerX + this.#posX), Math.floor(this.#centerY + this.#posY), this.#width, this.#height);
   }
 
   renderFileSelect() {
