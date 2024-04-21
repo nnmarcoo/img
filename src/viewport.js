@@ -100,7 +100,6 @@ export default class Viewport {
       this.#height = this.#img.naturalHeight;
       this.centerImage();
       this.#setCenter();
-      this.zoomOut();
       this.draw();
     };
     this.#img.src = image;
