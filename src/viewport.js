@@ -10,38 +10,81 @@ export default class Viewport {
   #centerX;
   #centerY;
 
-  #image;
+  #img;
   #width;
   #height;
-  #posX;
-  #posY;
+  #imgX;
+  #imgY;
+
+  #mousePrevX;
+  #mousePrevY;
+  #isDragging;
   
   constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = this.#canvas.getContext('2d');
     this.#ctx.imageSmoothingEnabled = false;
-    this.#image = new Image();
+    this.#img = new Image(); // should this live outside of viewport?
+
+    this.#isDragging = false;
+    this.#canvas.addEventListener('mousedown', this.#mouseDown.bind(this));
+    document.addEventListener('mouseup', this.#mouseUp.bind(this));
+    document.addEventListener('mousemove', this.#mouseMove.bind(this));
+    this.#canvas.addEventListener('wheel', this.#wheel.bind(this))
+  }
+
+  #wheel(e) {
+    if (this.#img.src === '') return;
+
+  }
+
+  #mouseDown(e) {
+    if (this.#img.src === '' || e.buttons !== 1) return;
+    this.#mousePrevX = e.clientX;
+    this.#mousePrevY = e.clientY;
+    this.#isDragging = true;
+  }
+  #mouseUp() {
+    if (this.#img.src === '') return;
+    this.#canvas.style.cursor = 'default';
+    this.#isDragging = false;
+  }
+
+  #mouseMove(e) {
+    if (e.buttons !== 1 || !this.#isDragging) return;
+    this.clearImage();
+
+    if (this.#canvas.style.cursor !== 'grabbing')
+      this.#canvas.style.cursor = 'grabbing';
+
+    this.#imgX = this.#clamp(this.#imgX + (e.clientX - this.#mousePrevX), -this.#width/2, this.#width/2);
+    this.#imgY = this.#clamp(this.#imgY + (e.clientY - this.#mousePrevY), -this.#height/2, this.#height/2);
+
+    this.#mousePrevX = e.clientX;
+    this.#mousePrevY = e.clientY;
+
+    this.draw();
   }
 
   setImage(image) {
     this.renderLoading();
-    this.#image.onload = () => {
+    this.#img.onload = () => {
       this.clearImage();
-      this.#width = this.#image.naturalWidth;
-      this.#height = this.#image.naturalHeight;
+      this.#width = this.#img.naturalWidth;
+      this.#height = this.#img.naturalHeight;
       this.centerImage();
       this.#setCenter();
       this.draw();
     };
-    this.#image.src = image;
+    this.#img.src = image;
   }
 
   draw() {
-    if (this.#image.src === '') {
+    if (this.#img.src === '') {
       this.renderFileSelect();
       return;
     }
-    this.#ctx.drawImage(this.#image, Math.floor(this.#centerX + this.#posX), Math.floor(this.#centerY + this.#posY), this.#width, this.#height);
+    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
   }
 
   renderFileSelect() {
@@ -66,7 +109,7 @@ export default class Viewport {
   }
 
   clearImage() {
-    this.#ctx.clearRect(this.#centerX + this.#posX, this.#centerY + this.#posY, this.#width, this.#height);
+    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
   }
 
   fillParent() {
@@ -76,13 +119,17 @@ export default class Viewport {
   }
 
   centerImage() {
-      this.#posX = 0;
-      this.#posY = 0;
+      this.#imgX = 0;
+      this.#imgY = 0;
   }
 
   #setCenter() {
     this.#centerX = this.#canvas.clientWidth/2 - this.#width/2;
     this.#centerY = this.#canvas.clientHeight/2 - this.#height/2;
+  }
+
+  #clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
   
 }
