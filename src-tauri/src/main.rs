@@ -35,7 +35,7 @@ fn show_window(window: tauri::Window) {
 fn set_image_path(path: String) {
     thread::spawn(move || {
     let mut image_path = IMAGE_PATH.lock().unwrap();
-    let mut image_data = IMAGE_DATA.lock().unwrap();
+    //let mut image_data = IMAGE_DATA.lock().unwrap();
     *image_path = path.clone();
     //*image_data = image::open(path).unwrap();
     });
