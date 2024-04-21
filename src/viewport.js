@@ -1,9 +1,3 @@
-const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
-                    0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
-                    2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
-                    10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
-let zoomStep = 0;
-
 export default class Viewport {
   #canvas;
   #ctx;
@@ -19,12 +13,23 @@ export default class Viewport {
   #mousePrevX;
   #mousePrevY;
   #isDragging;
+
+  #zoomSteps;
+  #zoomStep;
   
   constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = this.#canvas.getContext('2d');
     this.#ctx.imageSmoothingEnabled = false;
     this.#img = new Image(); // should this live outside of viewport?
+    this.#zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
+                        0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
+                        2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
+                        10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
+    this.#zoomStep = 0;
+
+    this.#imgX = 0;
+    this.#imgY = 0;
 
     this.#isDragging = false;
     this.#canvas.addEventListener('mousedown', this.#mouseDown.bind(this));
@@ -35,7 +40,28 @@ export default class Viewport {
 
   #wheel(e) {
     if (this.#img.src === '') return;
+    this.clearImage();
 
+    const pW = this.#width;
+    const pH = this.#height;
+
+    if (e.deltaY < 0) // scroll up
+      this.zoomIn();
+    else
+      this.zoomOut();
+
+    const dW = this.#width - pW;
+    const dH = this.#height - pH;
+
+    const offsetX = (e.clientX - this.#imgX) * dW / pW;
+    const offsetY = (e.clientY - this.#imgY) * dH / pH;
+
+    console.log(this.#imgX);
+
+    this.#imgX = this.#clampImageX(this.#imgX + offsetX);
+    this.#imgY = this.#clampImageY(this.#imgY - offsetY);
+
+    this.draw();
   }
 
   #mouseDown(e) {
@@ -57,8 +83,8 @@ export default class Viewport {
     if (this.#canvas.style.cursor !== 'grabbing')
       this.#canvas.style.cursor = 'grabbing';
 
-    this.#imgX = this.#clamp(this.#imgX + (e.clientX - this.#mousePrevX), -this.#width/2, this.#width/2);
-    this.#imgY = this.#clamp(this.#imgY + (e.clientY - this.#mousePrevY), -this.#height/2, this.#height/2);
+    this.#imgX = (this.#imgX + (e.clientX - this.#mousePrevX));
+    this.#imgY = (this.#imgY + (e.clientY - this.#mousePrevY));
 
     this.#mousePrevX = e.clientX;
     this.#mousePrevY = e.clientY;
@@ -74,6 +100,7 @@ export default class Viewport {
       this.#height = this.#img.naturalHeight;
       this.centerImage();
       this.#setCenter();
+      this.zoomOut();
       this.draw();
     };
     this.#img.src = image;
@@ -130,6 +157,31 @@ export default class Viewport {
 
   #clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
+  }
+
+  #clampImageX(v) {
+    let hW = this.#width/2;
+    return this.#clamp(v, -hW, hW);
+  }
+  
+  #clampImageY(v) {
+    let hH = this.#height/2
+    return this.#clamp(v, -hH, hH);
+  }
+
+  zoomIn() {
+    this.#zoomStep = Math.min(this.#zoomStep + 1, this.#zoomSteps.length - 1);
+    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
+  }
+
+  zoomOut() {
+    this.#zoomStep = Math.max(this.#zoomStep - 1, 0);
+    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
+  }
+
+  zoomCustom(p) { // ex: 0.05 : 5%
+    this.#width = p * this.#img.naturalWidth;
+    this.#height = p * this.#img.naturalHeight;
   }
   
 }
