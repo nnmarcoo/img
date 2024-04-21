@@ -82,16 +82,6 @@ fn get_image_path() -> String {
     IMAGE_PATH.lock().unwrap().clone()
 }
 
-#[tauri::command]
-fn get_image_types() -> Vec<String> {
-    IMAGE_TYPES.clone()
-}
-
-#[tauri::command]
-fn get_image_path() -> String {
-    IMAGE_PATH.lock().unwrap().clone()
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() > 1 {
