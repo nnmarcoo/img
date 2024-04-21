@@ -33,7 +33,7 @@
         "width": 1000,
         "height": 750,
         "minWidth": 200,
-        "minHeight": 30,
+        "minHeight": 150,
         "fileDropEnabled": true,
         "visible": false,
         "center": true
