@@ -32,6 +32,8 @@
         "label": "img",
         "width": 1000,
         "height": 750,
+        "minWidth": 200,
+        "minHeight": 30,
         "fileDropEnabled": true,
         "visible": false,
         "center": true
