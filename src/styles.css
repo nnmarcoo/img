@@ -21,6 +21,14 @@ body, html, :root {
   user-select: none;
 }
 
+/* darkest
+ #222831
+ #31363F
+ #76ABAE
+ #EEEEEE
+   lightest
+*/
+
 button {
   background-color: #31363F;
   border: none;
@@ -35,14 +43,6 @@ button:hover {
   background-color: #EEEEEE;
   color: #31363F;
 }
-
-/* darkest
- #222831
- #31363F
- #76ABAE
- #EEEEEE
-   lightest
-*/
 
 #main-grid {
   display: grid;
@@ -94,34 +94,6 @@ button:hover {
   grid-row: 1 / 2;
   grid-column: 1 / 2;
   overflow: hidden;
-}
-
-#file-select {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  white-space: nowrap;
-  position: relative;
-  top: calc(50% - 15px);
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-#file-select:hover {
-  cursor: pointer;
-}
-
-#file-icon {
-  font-size: 5rem;
-  line-height: 5rem;
-}
-
-#image {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .gap {

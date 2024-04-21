@@ -4,9 +4,6 @@
 #[macro_use] extern crate lazy_static;
 use std::sync::Mutex;
 use std::env;
-use std::fs::File;
-use std::io::Read;
-use base64::{engine::general_purpose, Engine as _};
 use std::path::{Path, PathBuf};
 use std::fs;
 use image::DynamicImage;
@@ -76,14 +73,6 @@ fn images_in_current_directory() -> (Option<usize>, Vec<PathBuf>) {
 }
 
 #[tauri::command]
-fn read_image(path: String) -> String {
-    let mut file = File::open(path).unwrap();
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer).unwrap();
-    return general_purpose::STANDARD.encode(&buffer);
-}
-
-#[tauri::command]
 fn get_image_types() -> Vec<String> {
     IMAGE_TYPES.clone()
 }
@@ -103,7 +92,6 @@ fn main() {
                                                  set_image_path, 
                                                  get_image_types, 
                                                  get_image_path, 
-                                                 read_image, 
                                                  prev_image, 
                                                  next_image])
         .run(tauri::generate_context!())
