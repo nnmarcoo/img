@@ -127,9 +127,6 @@ export default class Viewport {
   renderLoading() {
     this.#canvas.style.cursor = 'default';
     this.#ctx.clearRect(0, 0, this.#canvas.clientWidth, this.#canvas.clientHeight);
-    this.#ctx.fillStyle = '#EEEEEE';
-    this.#ctx.textAlign = 'center';
-    this.#ctx.font = '16px Trebuchet MS';
     this.#ctx.fillText('Loading...', canvas.clientWidth/2, canvas.clientHeight/2 + 8);
   }
 
