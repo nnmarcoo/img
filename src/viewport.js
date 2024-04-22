@@ -55,9 +55,7 @@ export default class Viewport {
     const offsetX = (e.clientX - this.#imgX) * dW / pW;
     const offsetY = (e.clientY - this.#imgY) * dH / pH;
 
-    console.log(this.#imgX);
-
-    this.#imgX = this.#clampImageX(this.#imgX + offsetX);
+    this.#imgX = this.#clampImageX(this.#imgX - offsetX);
     this.#imgY = this.#clampImageY(this.#imgY - offsetY);
 
     this.draw();
@@ -93,15 +91,31 @@ export default class Viewport {
 
   setImage(image) {
     this.renderLoading();
+    this.#img.src = image;
     this.#img.onload = () => {
       this.clearImage();
-      this.#width = this.#img.naturalWidth;
-      this.#height = this.#img.naturalHeight;
-      this.centerImage();
+      this.#width = this.#img.width;
+      this.#height = this.#img.height;
+      this.#initImage();
       this.#setCenter();
       this.draw();
     };
-    this.#img.src = image;
+  }
+
+  #initImage() {
+    this.centerImage();
+    let zoom = this.#getFitZoom();
+
+     for (let i = 0; i < this.#zoomSteps.length; i++) {
+      if (this.#zoomSteps[i] >= zoom) {
+        this.#zoomStep = this.#clamp(i-1, 0, this.#zoomSteps.length - 1);
+        break;
+      }
+    }
+
+    console.log(zoom + ', ' + this.#zoomStep);
+
+    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
   }
 
   draw() {
@@ -135,8 +149,8 @@ export default class Viewport {
   }
 
   fillParent() {
-    var PIXEL_RATIO = (() => {
-      var dpr = window.devicePixelRatio || 1,
+    let ratio = (() => {
+      let dpr = window.devicePixelRatio || 1,
           bsr = this.#ctx.webkitBackingStorePixelRatio ||
                 this.#ctx.mozBackingStorePixelRatio ||
                 this.#ctx.msBackingStorePixelRatio ||
@@ -145,11 +159,11 @@ export default class Viewport {
 
       return dpr / bsr;
     })();
-    this.#canvas.width = canvas.parentElement.offsetWidth * PIXEL_RATIO;
-    this.#canvas.height = canvas.parentElement.offsetHeight * PIXEL_RATIO;
+    this.#canvas.width = canvas.parentElement.offsetWidth * ratio;
+    this.#canvas.height = canvas.parentElement.offsetHeight * ratio;
     this.#canvas.style.width = canvas.parentElement.offsetWidth + 'px';
     this.#canvas.style.height = canvas.parentElement.offsetHeight + 'px';
-    this.#ctx.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
+    this.#ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     this.#setCenter();
   }
 
@@ -188,8 +202,14 @@ export default class Viewport {
   }
 
   zoomCustom(p) { // ex: 0.05 : 5%
-    this.#width = p * this.#img.naturalWidth;
-    this.#height = p * this.#img.naturalHeight;
+    this.#width = p * this.#img.width;
+    this.#height = p * this.#img.height;
+  }
+
+  #getFitZoom() {
+    let scaleWidth = canvas.parentElement.clientWidth / this.#img.width,
+        scaleHeight = canvas.parentElement.clientHeight / this.#img.height;
+    return Math.min(scaleWidth, scaleHeight);
   }
   
 }
