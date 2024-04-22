@@ -20,7 +20,6 @@ export default class Viewport {
   constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = this.#canvas.getContext('2d');
-    this.#ctx.imageSmoothingEnabled = false;
     this.#img = new Image(); // should this live outside of viewport?
     this.#zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
                         0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
@@ -139,8 +138,21 @@ export default class Viewport {
   }
 
   fillParent() {
-    canvas.width = canvas.parentElement.offsetWidth;
-    canvas.height = canvas.parentElement.offsetHeight;
+    var PIXEL_RATIO = (() => {
+      var dpr = window.devicePixelRatio || 1,
+          bsr = this.#ctx.webkitBackingStorePixelRatio ||
+                this.#ctx.mozBackingStorePixelRatio ||
+                this.#ctx.msBackingStorePixelRatio ||
+                this.#ctx.oBackingStorePixelRatio ||
+                this.#ctx.backingStorePixelRatio || 1;
+
+      return dpr / bsr;
+    })();
+    this.#canvas.width = canvas.parentElement.offsetWidth * PIXEL_RATIO;
+    this.#canvas.height = canvas.parentElement.offsetHeight * PIXEL_RATIO;
+    this.#canvas.style.width = canvas.parentElement.offsetWidth + 'px';
+    this.#canvas.style.height = canvas.parentElement.offsetHeight + 'px';
+    this.#ctx.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
     this.#setCenter();
   }
 
