@@ -112,9 +112,6 @@ export default class Viewport {
         break;
       }
     }
-
-    console.log(zoom + ', ' + this.#zoomStep);
-
     this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
   }
 
