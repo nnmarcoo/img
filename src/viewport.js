@@ -52,11 +52,11 @@ export default class Viewport {
     const dW = this.#width - pW;
     const dH = this.#height - pH;
 
-    const offsetX = (e.clientX - this.#imgX - this.#width/2) * dW / pW;
-    const offsetY = (e.clientY - this.#imgY - this.#height/2) * dH / pH;
+    const offsetX = (e.clientX - (this.#imgX + this.#canvas.clientWidth/2)) * dW / pW;
+    const offsetY = (e.clientY - (this.#imgY + this.#canvas.clientHeight/2)) * dH / pH;
 
-    this.#imgX = this.#imgX - offsetX;
-    this.#imgY = this.#imgY - offsetY;
+    this.#imgX = this.#clampImageX(this.#imgX - offsetX);
+    this.#imgY = this.#clampImageY(this.#imgY - offsetY);
 
     this.draw();
   }
@@ -80,8 +80,8 @@ export default class Viewport {
     if (this.#canvas.style.cursor !== 'grabbing')
       this.#canvas.style.cursor = 'grabbing';
 
-    this.#imgX = (this.#imgX + (e.clientX - this.#mousePrevX));
-    this.#imgY = (this.#imgY + (e.clientY - this.#mousePrevY));
+    this.#imgX = this.#clampImageX(this.#imgX + (e.clientX - this.#mousePrevX));
+    this.#imgY = this.#clampImageY(this.#imgY + (e.clientY - this.#mousePrevY));
 
     this.#mousePrevX = e.clientX;
     this.#mousePrevY = e.clientY;
@@ -97,7 +97,6 @@ export default class Viewport {
       this.#width = this.#img.width;
       this.#height = this.#img.height;
       this.#initImage();
-      this.#setCenter();
       this.draw();
     };
   }
@@ -120,7 +119,9 @@ export default class Viewport {
       this.renderFileSelect();
       return;
     }
-    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#width/2), Math.floor(this.#centerY + this.#imgY - this.#height/2), this.#width, this.#height);
+    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#width/2), 
+                                   Math.floor(this.#centerY + this.#imgY - this.#height/2), 
+                                   this.#width, this.#height);
   }
 
   renderFileSelect() {
@@ -142,7 +143,8 @@ export default class Viewport {
   }
 
   clearImage() {
-    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
+    //this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
+    this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
   }
 
   fillParent() {
@@ -163,15 +165,15 @@ export default class Viewport {
     this.#ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     this.#setCenter();
   }
+  
+  #setCenter() {
+    this.#centerX = this.#canvas.clientWidth/2;
+    this.#centerY = this.#canvas.clientHeight/2;
+  }
 
   centerImage() {
       this.#imgX = 0;
       this.#imgY = 0;
-  }
-
-  #setCenter() {
-    this.#centerX = this.#canvas.clientWidth/2;
-    this.#centerY = this.#canvas.clientHeight/2;
   }
 
   #clamp(value, min, max) {
