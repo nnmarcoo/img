@@ -52,11 +52,11 @@ export default class Viewport {
     const dW = this.#width - pW;
     const dH = this.#height - pH;
 
-    const offsetX = (e.clientX - this.#imgX) * dW / pW;
-    const offsetY = (e.clientY - this.#imgY) * dH / pH;
+    const offsetX = (e.clientX - this.#imgX - this.#width/2) * dW / pW;
+    const offsetY = (e.clientY - this.#imgY - this.#height/2) * dH / pH;
 
-    this.#imgX = this.#clampImageX(this.#imgX - offsetX);
-    this.#imgY = this.#clampImageY(this.#imgY - offsetY);
+    this.#imgX = this.#imgX - offsetX;
+    this.#imgY = this.#imgY - offsetY;
 
     this.draw();
   }
@@ -120,7 +120,7 @@ export default class Viewport {
       this.renderFileSelect();
       return;
     }
-    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
+    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#width/2), Math.floor(this.#centerY + this.#imgY - this.#height/2), this.#width, this.#height);
   }
 
   renderFileSelect() {
@@ -153,9 +153,9 @@ export default class Viewport {
                 this.#ctx.msBackingStorePixelRatio ||
                 this.#ctx.oBackingStorePixelRatio ||
                 this.#ctx.backingStorePixelRatio || 1;
-
       return dpr / bsr;
     })();
+
     this.#canvas.width = canvas.parentElement.offsetWidth * ratio;
     this.#canvas.height = canvas.parentElement.offsetHeight * ratio;
     this.#canvas.style.width = canvas.parentElement.offsetWidth + 'px';
@@ -170,8 +170,8 @@ export default class Viewport {
   }
 
   #setCenter() {
-    this.#centerX = this.#canvas.clientWidth/2 - this.#width/2;
-    this.#centerY = this.#canvas.clientHeight/2 - this.#height/2;
+    this.#centerX = this.#canvas.clientWidth/2;
+    this.#centerY = this.#canvas.clientHeight/2;
   }
 
   #clamp(value, min, max) {
