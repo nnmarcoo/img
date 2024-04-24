@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const zoomText = document.getElementById('zoom-text');
   const zoomTextSymbol = document.getElementById('zoom-text-symbol');
 
-  viewport.fillParent();
-  viewport.draw();
- 
   canvas.addEventListener('click', selectFile);
 
   await listen('tauri://file-drop', (e) => {
@@ -33,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('resize', () => {
     viewport.fillParent();
-    viewport.draw();
   });
 
   async function selectFile() {

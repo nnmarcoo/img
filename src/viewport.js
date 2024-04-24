@@ -5,8 +5,8 @@ export default class Viewport {
   #centerY;
 
   #img;
-  #width;
-  #height;
+  #imgW;
+  #imgH;
   #imgX;
   #imgY;
 
@@ -34,23 +34,24 @@ export default class Viewport {
     this.#canvas.addEventListener('mousedown', this.#mouseDown.bind(this));
     document.addEventListener('mouseup', this.#mouseUp.bind(this));
     document.addEventListener('mousemove', this.#mouseMove.bind(this));
-    this.#canvas.addEventListener('wheel', this.#wheel.bind(this))
+    this.#canvas.addEventListener('wheel', this.#wheel.bind(this));
+    this.fillParent();
   }
 
   #wheel(e) {
     if (this.#img.src === '') return;
     this.clearImage();
 
-    const pW = this.#width;
-    const pH = this.#height;
+    const pW = this.#imgW;
+    const pH = this.#imgH;
 
     if (e.deltaY < 0) // scroll up
       this.zoomIn();
     else
       this.zoomOut();
 
-    const dW = this.#width - pW;
-    const dH = this.#height - pH;
+    const dW = this.#imgW - pW;
+    const dH = this.#imgH - pH;
 
     const offsetX = (e.clientX - (this.#imgX + this.#canvas.clientWidth/2)) * dW / pW;
     const offsetY = (e.clientY - (this.#imgY + this.#canvas.clientHeight/2)) * dH / pH;
@@ -95,8 +96,8 @@ export default class Viewport {
 
     this.#img.onload = () => {
       this.clearImage();
-      this.#width = this.#img.width;
-      this.#height = this.#img.height;
+      this.#imgW = this.#img.width;
+      this.#imgH = this.#img.height;
       this.#initImage();
       this.draw();
     };
@@ -120,9 +121,9 @@ export default class Viewport {
       this.renderFileSelect();
       return;
     }
-    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#width/2), 
-                                   Math.floor(this.#centerY + this.#imgY - this.#height/2), 
-                                   this.#width, this.#height);
+    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#imgW/2), 
+                                   Math.floor(this.#centerY + this.#imgY - this.#imgH/2), 
+                                   this.#imgW, this.#imgH);
   }
 
   renderFileSelect() {
@@ -165,6 +166,7 @@ export default class Viewport {
     this.#canvas.style.height = canvas.parentElement.offsetHeight + 'px';
     this.#ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     this.#setCenter();
+    this.draw();
   }
   
   #setCenter() {
@@ -182,12 +184,12 @@ export default class Viewport {
   }
 
   #clampImageX(v) {
-    let hW = this.#width/2;
+    let hW = this.#imgW/2;
     return this.#clamp(v, -hW, hW);
   }
   
   #clampImageY(v) {
-    let hH = this.#height/2
+    let hH = this.#imgH/2
     return this.#clamp(v, -hH, hH);
   }
 
@@ -202,8 +204,8 @@ export default class Viewport {
   }
 
   zoomCustom(p) { // ex: 0.05 : 5%
-    this.#width = p * this.#img.width;
-    this.#height = p * this.#img.height;
+    this.#imgW = p * this.#img.width;
+    this.#imgH = p * this.#img.height;
     this.updateZoomText(p * 100);
   }
 
