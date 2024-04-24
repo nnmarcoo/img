@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const canvas = document.getElementById('canvas');
   const viewport = new Viewport(canvas);
   const imgTypes = await invoke('get_image_types');
+  const zoomText = document.getElementById('zoom-text');
+  const zoomTextSymbol = document.getElementById('zoom-text-symbol');
 
   viewport.fillParent();
   viewport.draw();
@@ -48,5 +50,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       canvas.removeEventListener('click', selectFile);
     }
   }
+
+  document.addEventListener('zoomchange', (e) => {
+    zoomText.textContent = e.detail.value;
+    zoomTextSymbol.textContent = '%'; // this is bad
+  });
   
 });

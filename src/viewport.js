@@ -20,7 +20,7 @@ export default class Viewport {
   constructor(canvas) {
     this.#canvas = canvas;
     this.#ctx = this.#canvas.getContext('2d');
-    this.#img = new Image(); // should this live outside of viewport?
+    this.#img = new Image();
     this.#zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
                         0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
                         2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
@@ -92,6 +92,7 @@ export default class Viewport {
   setImage(image) {
     this.renderLoading();
     this.#img.src = image;
+
     this.#img.onload = () => {
       this.clearImage();
       this.#width = this.#img.width;
@@ -203,12 +204,18 @@ export default class Viewport {
   zoomCustom(p) { // ex: 0.05 : 5%
     this.#width = p * this.#img.width;
     this.#height = p * this.#img.height;
+    this.updateZoomText(p * 100);
   }
 
   #getFitZoom() {
     let scaleWidth = canvas.parentElement.clientWidth / this.#img.width,
         scaleHeight = canvas.parentElement.clientHeight / this.#img.height;
     return Math.min(scaleWidth, scaleHeight);
+  }
+
+  updateZoomText(value) {
+    const e = new CustomEvent('zoomchange', { detail: { value } });
+    document.dispatchEvent(e);
   }
   
 }
