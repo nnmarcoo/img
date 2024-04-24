@@ -149,7 +149,7 @@ export default class Viewport {
   }
 
   clearImage() {
-    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX - this.#imgW/2), Math.floor(this.#centerY + this.#imgY - this.#imgH/2), this.#imgW, this.#imgH);
+    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX - this.#imgW/2), Math.floor(this.#centerY + this.#imgY - this.#imgH/2), Math.ceil(this.#imgW), Math.ceil(this.#imgH));
     //this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
   }
 
