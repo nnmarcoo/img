@@ -42,7 +42,6 @@ export function fillParent() {
 
 export function init() {
     fillParent();
-    renderFileSelect();
 
     canvas.addEventListener('mousedown', mouseDown);
     document.addEventListener('mouseup', mouseUp);
@@ -150,7 +149,6 @@ function renderLoading() {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     ctx.fillText('Loading...', canvas.clientWidth/2, canvas.clientHeight/2 + 8);
 }
-
 
 function clearImage() {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
