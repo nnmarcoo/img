@@ -35,6 +35,7 @@ export default class Viewport {
     document.addEventListener('mouseup', this.#mouseUp.bind(this));
     document.addEventListener('mousemove', this.#mouseMove.bind(this));
     this.#canvas.addEventListener('wheel', this.#wheel.bind(this));
+    document.addEventListener('keydown', this.#keydown.bind(this));
     this.fillParent();
   }
 
@@ -46,9 +47,9 @@ export default class Viewport {
     const pH = this.#imgH;
 
     if (e.deltaY < 0) // scroll up
-      this.zoomIn();
+      this.zoomIn(false);
     else
-      this.zoomOut();
+      this.zoomOut(false);
 
     const dW = this.#imgW - pW;
     const dH = this.#imgH - pH;
@@ -76,10 +77,11 @@ export default class Viewport {
 
   #mouseMove(e) {
     if (e.buttons !== 1 || !this.#isDragging) return;
-    this.clearImage();
 
     if (this.#canvas.style.cursor !== 'grabbing')
       this.#canvas.style.cursor = 'grabbing';
+
+    this.clearImage();
 
     this.#imgX = this.#clampImageX(this.#imgX + (e.clientX - this.#mousePrevX));
     this.#imgY = this.#clampImageY(this.#imgY + (e.clientY - this.#mousePrevY));
@@ -99,7 +101,6 @@ export default class Viewport {
       this.#imgW = this.#img.width;
       this.#imgH = this.#img.height;
       this.#initImage();
-      this.draw();
     };
   }
 
@@ -114,6 +115,9 @@ export default class Viewport {
       }
     }
     this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
+
+    const e = new CustomEvent('init');
+    document.dispatchEvent(e);
   }
 
   draw() {
@@ -145,8 +149,8 @@ export default class Viewport {
   }
 
   clearImage() {
-    //this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX), Math.floor(this.#centerY + this.#imgY), this.#width, this.#height);
-    this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX - this.#imgW/2), Math.floor(this.#centerY + this.#imgY - this.#imgH/2), this.#imgW, this.#imgH);
+    //this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
   }
 
   fillParent() {
@@ -193,19 +197,31 @@ export default class Viewport {
     return this.#clamp(v, -hH, hH);
   }
 
-  zoomIn() {
+  zoomIn(draw = true) {
     this.#zoomStep = Math.min(this.#zoomStep + 1, this.#zoomSteps.length - 1);
-    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
+    this.zoomCustom(this.#zoomSteps[this.#zoomStep], draw);
   }
 
-  zoomOut() {
+  zoomOut(draw = true) {
     this.#zoomStep = Math.max(this.#zoomStep - 1, 0);
-    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
+    this.zoomCustom(this.#zoomSteps[this.#zoomStep], draw);
   }
 
-  zoomCustom(p) { // ex: 0.05 : 5%
+  zoomCustom(p, draw = true) { // ex: 0.05 : 5%
     this.#imgW = p * this.#img.width;
     this.#imgH = p * this.#img.height;
+    
+    if (draw) {
+      this.clearImage();
+      this.draw();
+    } 
+
+    let newZoomStep = 0;
+    for (let i = 0; i < this.#zoomSteps.length; i++)
+      if (p >= this.#zoomSteps[i])
+        newZoomStep = i;
+    this.#zoomStep = newZoomStep;
+    
     this.updateZoomText(p * 100);
   }
 
@@ -219,5 +235,42 @@ export default class Viewport {
     const e = new CustomEvent('zoomchange', { detail: { value } });
     document.dispatchEvent(e);
   }
-  
+
+  getZoom() {
+    return this.#zoomSteps[this.#zoomStep];
+  }
+
+  async #keydown(e) { // TODO: Fix
+    if (this.#img.src === '') return;
+    if (e.ctrlKey) {
+      if (e.key === '=')
+        this.zoomIn();
+      else if (e.key === '-')
+        this.zoomOut();
+      else if (e.key === 'r')
+        e.preventDefault();
+    }
+    else if (e.key === 'z') { // TODO: Fix
+      zoomText.blur();
+      zoomText.focus();
+      e.preventDefault();
+    }
+    else if (e.key === 'f')
+      fitToViewport();
+    else if (e.key === 'c')
+      center(img);
+    else if (e.key === 'ArrowRight')
+      setImage(await invoke('next_image'))
+    else if (e.key === 'ArrowLeft')
+      setImage(await invoke('prev_image'))
+    else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
+      e.preventDefault();
+  }
+
+  fitToViewport() { // TODO: Fix
+    let zoom = this.#getFitZoom();
+    this.centerImage(img);
+    zoomCustom(zoom);
+    updateZoomText(Math.round(zoom * 100));
+  }
 }

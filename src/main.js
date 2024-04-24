@@ -49,7 +49,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.addEventListener('zoomchange', (e) => {
     zoomText.textContent = e.detail.value;
-    zoomTextSymbol.textContent = '%'; // this is bad
+  });
+
+  document.addEventListener('init', () => {
+    zoomTextSymbol.textContent = '%';
+  });
+
+  zoomText.addEventListener('input', () => {
+    viewport.clearImage();
+    let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
+    if (cleanText !== zoomText.innerText)
+      zoomText.blur();
+    if (cleanText.length > 0) 
+      zoomText.textContent = cleanText;
+    else
+      zoomText.textConntent = viewport.getZoom * 100;
+    viewport.zoomCustom(zoomText.textContent / 100);
+  });
+
+  zoomText.addEventListener('focus', () => {
+    let range = document.createRange();
+    range.selectNodeContents(zoomText);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+
+  zoomText.addEventListener('blur', () => {
+    window.getSelection().removeAllRanges();
   });
   
 });
