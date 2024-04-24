@@ -1,276 +1,249 @@
-export default class Viewport {
-  #canvas;
-  #ctx;
-  #centerX;
-  #centerY;
+import { ctx, zoomText, zoomTextSymbol } from './main.js';
+import { clamp } from './util.js';
 
-  #img;
-  #imgW;
-  #imgH;
-  #imgX;
-  #imgY;
+let centerX = 0;
+let centerY = 0;
 
-  #mousePrevX;
-  #mousePrevY;
-  #isDragging;
+let img = new Image();
+let imgX = 0;
+let imgY = 0;
+let imgW = 0;
+let imgH = 0;
 
-  #zoomSteps;
-  #zoomStep;
-  
-  constructor(canvas) {
-    this.#canvas = canvas;
-    this.#ctx = this.#canvas.getContext('2d');
-    this.#img = new Image();
-    this.#zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
-                        0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
-                        2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
-                        10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
-    this.#zoomStep = 0;
+const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
+                    0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
+                    2.50, 3.00, 3.50, 4.00, 5.00, 6.00, 7.00, 8.00, 
+                    10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
+let zoomStep = 0;
 
-    this.#imgX = 0;
-    this.#imgY = 0;
+let mPrevX = 0;
+let mPrevY = 0;
+let isDragging = false;
 
-    this.#isDragging = false;
-    this.#canvas.addEventListener('mousedown', this.#mouseDown.bind(this));
-    document.addEventListener('mouseup', this.#mouseUp.bind(this));
-    document.addEventListener('mousemove', this.#mouseMove.bind(this));
-    this.#canvas.addEventListener('wheel', this.#wheel.bind(this));
-    document.addEventListener('keydown', this.#keydown.bind(this));
-    this.fillParent();
-  }
-
-  #wheel(e) {
-    if (this.#img.src === '') return;
-    this.clearImage();
-
-    const pW = this.#imgW;
-    const pH = this.#imgH;
-
-    if (e.deltaY < 0) // scroll up
-      this.zoomIn(false);
-    else
-      this.zoomOut(false);
-
-    const dW = this.#imgW - pW;
-    const dH = this.#imgH - pH;
-
-    const offsetX = (e.clientX - (this.#imgX + this.#canvas.clientWidth/2)) * dW / pW;
-    const offsetY = (e.clientY - (this.#imgY + this.#canvas.clientHeight/2)) * dH / pH;
-
-    this.#imgX = this.#clampImageX(this.#imgX - offsetX);
-    this.#imgY = this.#clampImageY(this.#imgY - offsetY);
-
-    this.draw();
-  }
-
-  #mouseDown(e) {
-    if (this.#img.src === '' || e.buttons !== 1) return;
-    this.#mousePrevX = e.clientX;
-    this.#mousePrevY = e.clientY;
-    this.#isDragging = true;
-  }
-  #mouseUp() {
-    if (this.#img.src === '') return;
-    this.#canvas.style.cursor = 'default';
-    this.#isDragging = false;
-  }
-
-  #mouseMove(e) {
-    if (e.buttons !== 1 || !this.#isDragging) return;
-
-    if (this.#canvas.style.cursor !== 'grabbing')
-      this.#canvas.style.cursor = 'grabbing';
-
-    this.clearImage();
-
-    this.#imgX = this.#clampImageX(this.#imgX + (e.clientX - this.#mousePrevX));
-    this.#imgY = this.#clampImageY(this.#imgY + (e.clientY - this.#mousePrevY));
-
-    this.#mousePrevX = e.clientX;
-    this.#mousePrevY = e.clientY;
-
-    this.draw();
-  }
-
-  setImage(image) {
-    this.renderLoading();
-    this.#img.src = image;
-
-    this.#img.onload = () => {
-      this.clearImage();
-      this.#imgW = this.#img.width;
-      this.#imgH = this.#img.height;
-      this.#initImage();
-    };
-  }
-
-  #initImage() {
-    this.centerImage();
-    let zoom = this.#getFitZoom();
-
-     for (let i = 0; i < this.#zoomSteps.length; i++) {
-      if (this.#zoomSteps[i] >= zoom) {
-        this.#zoomStep = this.#clamp(i-1, 0, this.#zoomSteps.length - 1);
-        break;
-      }
-    }
-    this.zoomCustom(this.#zoomSteps[this.#zoomStep]);
-
-    const e = new CustomEvent('init');
-    document.dispatchEvent(e);
-  }
-
-  draw() {
-    if (this.#img.src === '') {
-      this.renderFileSelect();
-      return;
-    }
-    this.#ctx.drawImage(this.#img, Math.floor(this.#centerX + this.#imgX - this.#imgW/2), 
-                                   Math.floor(this.#centerY + this.#imgY - this.#imgH/2), 
-                                   this.#imgW, this.#imgH);
-  }
-
-  renderFileSelect() {
-    this.#canvas.style.cursor = 'pointer';
-    this.#ctx.fillStyle = '#EEEEEE';
-    this.#ctx.textAlign = 'center';
-    // Draw icon
-    this.#ctx.font = '80px Trebuchet MS';
-    this.#ctx.fillText('🗎', canvas.clientWidth/2, canvas.clientHeight/2 + 14);
-    // Draw text
-    this.#ctx.font = '16px Trebuchet MS';
-    this.#ctx.fillText('Drag or select file to begin', canvas.clientWidth/2, canvas.clientHeight/2 + 41);
-  }
-
-  renderLoading() {
-    this.#canvas.style.cursor = 'default';
-    this.#ctx.clearRect(0, 0, this.#canvas.clientWidth, this.#canvas.clientHeight);
-    this.#ctx.fillText('Loading...', canvas.clientWidth/2, canvas.clientHeight/2 + 8);
-  }
-
-  clearImage() {
-    this.#ctx.clearRect(Math.floor(this.#centerX + this.#imgX - this.#imgW/2), Math.floor(this.#centerY + this.#imgY - this.#imgH/2), Math.ceil(this.#imgW), Math.ceil(this.#imgH));
-    //this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-  }
-
-  fillParent() {
+export function fillParent() {
     let ratio = (() => {
       let dpr = window.devicePixelRatio || 1,
-          bsr = this.#ctx.webkitBackingStorePixelRatio ||
-                this.#ctx.mozBackingStorePixelRatio ||
-                this.#ctx.msBackingStorePixelRatio ||
-                this.#ctx.oBackingStorePixelRatio ||
-                this.#ctx.backingStorePixelRatio || 1;
+          bsr = ctx.webkitBackingStorePixelRatio ||
+                ctx.mozBackingStorePixelRatio ||
+                ctx.msBackingStorePixelRatio ||
+                ctx.oBackingStorePixelRatio ||
+                ctx.backingStorePixelRatio || 1;
       return dpr / bsr;
     })();
 
-    this.#canvas.width = canvas.parentElement.offsetWidth * ratio;
-    this.#canvas.height = canvas.parentElement.offsetHeight * ratio;
-    this.#canvas.style.width = canvas.parentElement.offsetWidth + 'px';
-    this.#canvas.style.height = canvas.parentElement.offsetHeight + 'px';
-    this.#ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    this.#setCenter();
-    this.draw();
-  }
-  
-  #setCenter() {
-    this.#centerX = this.#canvas.clientWidth/2;
-    this.#centerY = this.#canvas.clientHeight/2;
-  }
+    canvas.width = canvas.parentElement.offsetWidth * ratio;
+    canvas.height = canvas.parentElement.offsetHeight * ratio;
+    canvas.style.width = canvas.parentElement.offsetWidth + 'px';
+    canvas.style.height = canvas.parentElement.offsetHeight + 'px';
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    setCenter();
+    draw();
+}
 
-  centerImage() {
-      this.#imgX = 0;
-      this.#imgY = 0;
-  }
+export function init() {
+    fillParent();
+    renderFileSelect();
 
-  #clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
+    canvas.addEventListener('mousedown', mouseDown);
+    document.addEventListener('mouseup', mouseUp);
+    document.addEventListener('mousemove', mouseMove);
+    canvas.addEventListener('wheel', wheel);
+    window.addEventListener('resize', fillParent);
 
-  #clampImageX(v) {
-    let hW = this.#imgW/2;
-    return this.#clamp(v, -hW, hW);
-  }
-  
-  #clampImageY(v) {
-    let hH = this.#imgH/2
-    return this.#clamp(v, -hH, hH);
-  }
+    zoomText.addEventListener('focus', focusZoomText);
+    zoomText.addEventListener('blur', blurZoomText);
+    zoomText.addEventListener('input', inputZoomText);
+}
 
-  zoomIn(draw = true) {
-    this.#zoomStep = Math.min(this.#zoomStep + 1, this.#zoomSteps.length - 1);
-    this.zoomCustom(this.#zoomSteps[this.#zoomStep], draw);
-  }
+export function setImage(src) {
+    renderLoading();
+    img.src = src;
+    zoomTextSymbol.textContent = '%';
 
-  zoomOut(draw = true) {
-    this.#zoomStep = Math.max(this.#zoomStep - 1, 0);
-    this.zoomCustom(this.#zoomSteps[this.#zoomStep], draw);
-  }
+    img.onload = () => {
+        clearImage();
+        initImage();
+    }
+}
 
-  zoomCustom(p, draw = true) { // ex: 0.05 : 5%
-    this.#imgW = p * this.#img.width;
-    this.#imgH = p * this.#img.height;
-    
-    if (draw) {
-      this.clearImage();
-      this.draw();
-    } 
+function initImage() {
+    centerImage();
+    let zoom = getFitZoom();
+
+    for (let i = 0; i < zoomSteps.length; i++) {
+        if (zoomSteps[i] >= zoom) {
+            zoomStep = clamp(i-1, 0, zoomSteps.length-1);
+            break;
+        }
+    }
+    zoomCustom(zoomSteps[zoomStep]);
+}
+
+function draw() {
+    if (img.src === '') {
+        renderFileSelect();
+        return;
+    }
+    ctx.drawImage(img, Math.floor(centerX + imgX - imgW/2),
+                       Math.floor(centerY + imgY - imgH/2),
+                       Math.floor(imgW), Math.floor(imgH));
+}
+
+function zoomCustom(p, render = true) {
+    imgW = p * img.naturalWidth;
+    imgH = p * img.naturalHeight;
+
+    if (render) {
+        clearImage();
+        draw();
+    }
 
     let newZoomStep = 0;
-    for (let i = 0; i < this.#zoomSteps.length; i++)
-      if (p >= this.#zoomSteps[i])
+    for (let i = 0; i < zoomSteps.length; i++)
+      if (p >= zoomSteps[i])
         newZoomStep = i;
-    this.#zoomStep = newZoomStep;
-    
-    this.updateZoomText(p * 100);
-  }
+    zoomStep = newZoomStep;
 
-  #getFitZoom() {
-    let scaleWidth = canvas.parentElement.clientWidth / this.#img.width,
-        scaleHeight = canvas.parentElement.clientHeight / this.#img.height;
-    return Math.min(scaleWidth, scaleHeight);
-  }
+    updateZoomText(p * 100);
+}
 
-  updateZoomText(value) {
-    const e = new CustomEvent('zoomchange', { detail: { value } });
-    document.dispatchEvent(e);
-  }
+function zoomIn(render = true) {
+    zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+    zoomCustom(zoomSteps[zoomStep], render);
+}
 
-  getZoom() {
-    return this.#zoomSteps[this.#zoomStep];
-  }
+function zoomOut(render = true) {
+    zoomStep = Math.max(zoomStep - 1, 0);
+    zoomCustom(zoomSteps[zoomStep], render);
+}
 
-  async #keydown(e) { // TODO: Fix
-    if (this.#img.src === '') return;
-    if (e.ctrlKey) {
-      if (e.key === '=')
-        this.zoomIn();
-      else if (e.key === '-')
-        this.zoomOut();
-      else if (e.key === 'r')
-        e.preventDefault();
-    }
-    else if (e.key === 'z') { // TODO: Fix
+function centerImage() {
+    imgX = 0;
+    imgY = 0;
+}
+
+function getFitZoom() {
+    let scaleW = canvas.clientWidth / img.naturalWidth,
+        scaleH = canvas.clientHeight / img.naturalHeight;
+    return Math.min(scaleW, scaleH);
+}
+
+function setCenter() {
+    centerX = canvas.clientWidth/2;
+    centerY = canvas.clientHeight/2;
+}
+
+function renderFileSelect() {
+    canvas.style.cursor = 'pointer';
+    ctx.fillStyle = '#EEEEEE';
+    ctx.textAlign = 'center';
+    // Draw icon
+    ctx.font = '80px Trebuchet MS';
+    ctx.fillText('🗎', canvas.clientWidth/2, canvas.clientHeight/2 + 14);
+    // Draw text
+    ctx.font = '16px Trebuchet MS';
+    ctx.fillText('Drag or select file to begin', canvas.clientWidth/2, canvas.clientHeight/2 + 41);
+}
+
+function renderLoading() {
+    canvas.style.cursor = 'default';
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    ctx.fillText('Loading...', canvas.clientWidth/2, canvas.clientHeight/2 + 8);
+}
+
+
+function clearImage() {
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+}
+
+export function mouseDown(e) {
+    if (img.src === '' || e.buttons !== 1) return;
+    mPrevX = e.clientX;
+    mPrevY = e.clientY;
+    isDragging = true;
+}
+
+export function mouseUp() {
+    if (img.src === '') return;
+    canvas.style.cursor = 'default';
+    isDragging = false;
+}
+
+export function mouseMove(e) {
+    if (e.buttons !== 1 || !isDragging) return;
+    if (canvas.style.cursor !== 'grabbing')
+        canvas.style.cursor = 'grabbing';
+
+    clearImage();
+
+    imgX = clampImageX(imgX + (e.clientX - mPrevX));
+    imgY = clampImageY(imgY + (e.clientY - mPrevY));
+
+    mPrevX = e.clientX;
+    mPrevY = e.clientY;
+
+    draw();
+      
+}
+
+export function wheel(e) {
+    if (img.src === '') return;
+    clearImage();
+
+    const pW = imgW;
+    const pH = imgH;
+
+    if (e.deltaY < 0) // scroll up
+      zoomIn(false);
+    else
+      zoomOut(false);
+
+    const dW = imgW - pW;
+    const dH = imgH - pH;
+
+    const offsetX = (e.clientX - (imgX + canvas.clientWidth/2)) * dW / pW;
+    const offsetY = (e.clientY - (imgY + canvas.clientHeight/2)) * dH / pH;
+
+    imgX = clampImageX(imgX - offsetX);
+    imgY = clampImageY(imgY - offsetY);
+
+    draw();
+}
+
+
+function clampImageX(v) {
+  let hW = imgW/2;
+  return clamp(v, -hW, hW);
+}
+  
+function clampImageY(v) {
+    let hH = imgH/2
+    return clamp(v, -hH, hH);
+}
+
+function updateZoomText(text) {
+    zoomText.textContent = text;
+}
+
+function inputZoomText() {
+    let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
+    if (cleanText !== zoomText.innerText)
       zoomText.blur();
-      zoomText.focus();
-      e.preventDefault();
-    }
-    else if (e.key === 'f')
-      fitToViewport();
-    else if (e.key === 'c')
-      center(img);
-    else if (e.key === 'ArrowRight')
-      setImage(await invoke('next_image'))
-    else if (e.key === 'ArrowLeft')
-      setImage(await invoke('prev_image'))
-    else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
-      e.preventDefault();
-  }
+    if (cleanText.length > 0) 
+      updateZoomText(cleanText);
+    else
+      updateZoomText(zoomSteps[zoomStep] * 100);
+    zoomCustom(zoomText.textContent / 100);
+}
 
-  fitToViewport() { // TODO: Fix
-    let zoom = this.#getFitZoom();
-    this.centerImage(img);
-    zoomCustom(zoom);
-    updateZoomText(Math.round(zoom * 100));
-  }
+function focusZoomText() {
+    let range = document.createRange();
+    range.selectNodeContents(zoomText);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+function blurZoomText() {
+    window.getSelection().removeAllRanges();
 }
