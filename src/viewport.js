@@ -1,4 +1,5 @@
-import { ctx, zoomText, zoomTextSymbol } from './main.js';
+const { invoke, convertFileSrc} = window.__TAURI__.tauri;
+import { ctx, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
 import { clamp } from './util.js';
 
 let centerX = 0;
@@ -35,7 +36,6 @@ export function fillParent() {
     canvas.height = canvas.parentElement.offsetHeight * ratio;
     canvas.style.width = canvas.parentElement.offsetWidth + 'px';
     canvas.style.height = canvas.parentElement.offsetHeight + 'px';
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     setCenter();
     draw();
 }
@@ -52,17 +52,31 @@ export function init() {
     zoomText.addEventListener('focus', focusZoomText);
     zoomText.addEventListener('blur', blurZoomText);
     zoomText.addEventListener('input', inputZoomText);
+
+    nextImage.addEventListener('click', cycleNextImage);
+    prevImage.addEventListener('click', cyclePrevImage);
 }
 
 export function setImage(src) {
     renderLoading();
-    img.src = src;
+    img.src = convertFileSrc(src);
     zoomTextSymbol.textContent = '%';
+    invoke('set_image_path', {path: src});
 
     img.onload = () => {
         clearImage();
         initImage();
     }
+}
+
+async function cycleNextImage() {
+    if (img.src === '') return;
+    setImage(await invoke('next_image'));
+}
+
+async function cyclePrevImage() {
+    if (img.src === '') return;
+    setImage(await invoke('prev_image'));
 }
 
 function initImage() {
@@ -207,7 +221,6 @@ export function wheel(e) {
 
     draw();
 }
-
 
 function clampImageX(v) {
   let hW = imgW/2;

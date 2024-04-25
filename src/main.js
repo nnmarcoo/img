@@ -11,6 +11,8 @@ import * as viewport from './viewport.js';
 // Should elements that are only referenced once not be saved as const?
   
 const canvas = document.getElementById('canvas');
+export const nextImage = document.getElementById('next-image');
+export const prevImage = document.getElementById('prev-image');
 export const ctx = canvas.getContext('2d');
 export const zoomText = document.getElementById('zoom-text');
 export const zoomTextSymbol = document.getElementById('zoom-text-symbol');
@@ -26,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await listen('tauri://file-drop', (e) => {
     let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
     if (imgTypes.includes(extension))
-      viewport.setImage(convertFileSrc(e.payload[0]));
+      viewport.setImage(e.payload[0]);
       canvas.removeEventListener('click', selectFile);
   });
 
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
 
     if (file !== null) {
-      viewport.setImage(convertFileSrc(file));
+      viewport.setImage(file);
       canvas.removeEventListener('click', selectFile);
     }
   }
