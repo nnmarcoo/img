@@ -1,6 +1,6 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { ctx, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
-import { clamp } from './util.js';
+import { bottomBarText, ctx, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
+import { clamp, getFolderAndName } from './util.js';
 
 let centerX = 0;
 let centerY = 0;
@@ -66,6 +66,7 @@ export function setImage(src) {
     img.onload = () => {
         clearImage();
         initImage();
+        bottomBarText.textContent = getFolderAndName(src);
     }
 }
 

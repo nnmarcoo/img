@@ -16,6 +16,7 @@ export const prevImage = document.getElementById('prev-image');
 export const ctx = canvas.getContext('2d');
 export const zoomText = document.getElementById('zoom-text');
 export const zoomTextSymbol = document.getElementById('zoom-text-symbol');
+export const bottomBarText = document.getElementById('bottom-bar-text');
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');

@@ -4,8 +4,6 @@ body, html, :root {
 
   color: #EEEEEE;
   background-color: #222831;
-  margin: 0;
-  padding: 0;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,6 +17,11 @@ body, html, :root {
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
 }
 
 /* darkest
@@ -65,6 +68,8 @@ button:hover {
   grid-template-columns: 30px 10px;
   margin-right: 5px;
   gap: 2px;
+  align-items: flex-end;
+  flex-grow: 2;
 }
 
 #bottom-bar-flex {
@@ -72,8 +77,8 @@ button:hover {
   grid-column: 1 / 2;
   background-color: #31363F;
   display: flex;
-  justify-content: end;
   align-items: center;
+  justify-content: space-between;
 }
 
 #zoom-text {
@@ -94,6 +99,12 @@ button:hover {
   grid-row: 1 / 2;
   grid-column: 1 / 2;
   overflow: hidden;
+}
+
+#bottom-bar-text {
+  align-items: flex-start;
+  margin-left: 5px;
+  white-space: nowrap;
 }
 
 .gap {

@@ -32,10 +32,17 @@ fn show_window(window: tauri::Window) {
 fn set_image_path(path: String) {
     thread::spawn(move || {
     let mut image_path = IMAGE_PATH.lock().unwrap();
-    //let mut image_data = IMAGE_DATA.lock().unwrap();
+    //let mut image_data = IMAGE_DATA.lock().unwrap(); // only load image data if they open the TODO: editor
     *image_path = path.clone();
     //*image_data = image::open(path).unwrap();
     });
+}
+
+#[tauri::command]
+fn resize_image(p: u32) {
+    let mut image_data = IMAGE_DATA.lock().unwrap(); // channge so it doesn't freeze program
+    let resized_image = image_data.resize(image_data.width() * p, image_data.height() * p, image::imageops::FilterType::Lanczos3);
+
 }
 
 #[tauri::command]
@@ -93,7 +100,8 @@ fn main() {
                                                  get_image_types, 
                                                  get_image_path, 
                                                  prev_image, 
-                                                 next_image])
+                                                 next_image,
+                                                 resize_image])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }
