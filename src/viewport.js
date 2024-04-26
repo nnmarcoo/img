@@ -36,6 +36,7 @@ export function fillParent() {
     canvas.height = canvas.parentElement.offsetHeight * ratio;
     canvas.style.width = canvas.parentElement.offsetWidth + 'px';
     canvas.style.height = canvas.parentElement.offsetHeight + 'px';
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     setCenter();
     draw();
 }
@@ -47,6 +48,7 @@ export function init() {
     document.addEventListener('mouseup', mouseUp);
     document.addEventListener('mousemove', mouseMove);
     canvas.addEventListener('wheel', wheel);
+    canvas.addEventListener('dblclick', dblClick);
     window.addEventListener('resize', fillParent);
 
     zoomText.addEventListener('focus', focusZoomText);
@@ -55,6 +57,12 @@ export function init() {
 
     nextImage.addEventListener('click', cycleNextImage);
     prevImage.addEventListener('click', cyclePrevImage);
+}
+
+function dblClick() {
+    clearImage();
+    centerImage();
+    draw();
 }
 
 export function setImage(src) {
