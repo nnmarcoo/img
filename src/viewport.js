@@ -199,9 +199,10 @@ export function mouseMove(e) {
       
 }
 
-export function wheel(e) {
+export async function wheel(e) {
     if (img.src === '') return;
     clearImage();
+
 
     const pW = imgW;
     const pH = imgH;
@@ -210,6 +211,9 @@ export function wheel(e) {
       zoomIn(false);
     else
       zoomOut(false);
+    
+    //const resized = await invoke('resize_image', {p: zoomSteps[zoomStep], w: img.naturalWidth, h: img.naturalHeight});
+    //img.src = 'data:image/png;base64,' + resized;
 
     const dW = imgW - pW;
     const dH = imgH - pH;

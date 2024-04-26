@@ -2,12 +2,16 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 #[macro_use] extern crate lazy_static;
+use std::io::{Cursor, Read};
 use std::sync::Mutex;
 use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
+use std::fs::File;
+use image::codecs::png;
 use image::DynamicImage;
 use std::thread;
+use base64::{engine::general_purpose, Engine as _};
 
 lazy_static! {
     static ref IMAGE_TYPES: Vec<String> = vec![
@@ -32,17 +36,35 @@ fn show_window(window: tauri::Window) {
 fn set_image_path(path: String) {
     thread::spawn(move || {
     let mut image_path = IMAGE_PATH.lock().unwrap();
-    //let mut image_data = IMAGE_DATA.lock().unwrap(); // only load image data if they open the TODO: editor
+    let mut image_data = IMAGE_DATA.lock().unwrap(); // only load image data if they open the TODO: editor
     *image_path = path.clone();
-    //*image_data = image::open(path).unwrap();
+    *image_data = image::open(path).unwrap();
     });
 }
 
 #[tauri::command]
-fn resize_image(p: u32) {
-    let mut image_data = IMAGE_DATA.lock().unwrap(); // channge so it doesn't freeze program
-    let resized_image = image_data.resize(image_data.width() * p, image_data.height() * p, image::imageops::FilterType::Lanczos3);
+fn resize_image(p: f32) -> String {
+    let image_data = IMAGE_DATA.lock().unwrap(); // channge so it doesn't freeze program
+    let resized_image = image_data.resize(
+        ((image_data.width() as f32) * p) as u32, 
+        ((image_data.height() as f32) * p) as u32,
+         image::imageops::FilterType::Lanczos3);
 
+    let mut buffer: Vec<u8> = Vec::new();
+    let mut cursor = Cursor::new(&mut buffer);
+
+    let _ = resized_image.write_to(&mut cursor, image::ImageFormat::Png);
+
+    return general_purpose::STANDARD.encode(&buffer);
+    //return buffer.len().to_string();
+    
+}
+
+fn read_image(path: String) -> String {
+    let mut file = File::open(path).unwrap();
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer).unwrap();
+    return general_purpose::STANDARD.encode(&buffer);
 }
 
 #[tauri::command]
