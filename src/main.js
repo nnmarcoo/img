@@ -1,4 +1,4 @@
-const { invoke, convertFileSrc } = window.__TAURI__.tauri;
+const { invoke } = window.__TAURI__.tauri;
 const { open } = window.__TAURI__.dialog;
 const { listen } = window.__TAURI__.event;
 import * as viewport from './viewport.js';
@@ -13,7 +13,6 @@ import * as viewport from './viewport.js';
 const canvas = document.getElementById('canvas');
 export const nextImage = document.getElementById('next-image');
 export const prevImage = document.getElementById('prev-image');
-export const ctx = canvas.getContext('2d');
 export const zoomText = document.getElementById('zoom-text');
 export const zoomTextSymbol = document.getElementById('zoom-text-symbol');
 export const bottomBarText = document.getElementById('bottom-bar-text');

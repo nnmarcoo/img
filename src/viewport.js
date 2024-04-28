@@ -1,6 +1,10 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, ctx, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
 import { clamp, getFolderAndName } from './util.js';
+import { Filter } from './filter.js';
+
+const ctx = canvas.getContext('2d');
+let filter = new Filter();
 
 let centerX = 0;
 let centerY = 0;
