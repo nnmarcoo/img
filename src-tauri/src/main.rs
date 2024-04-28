@@ -13,6 +13,8 @@ use image::DynamicImage;
 use std::thread;
 use base64::{engine::general_purpose, Engine as _};
 
+
+// Image data should not be stored here because it is all handled by webgl?
 lazy_static! {
     static ref IMAGE_TYPES: Vec<String> = vec![
         String::from("png"),
@@ -36,12 +38,13 @@ fn show_window(window: tauri::Window) {
 fn set_image_path(path: String) {
     thread::spawn(move || {
     let mut image_path = IMAGE_PATH.lock().unwrap();
-    let mut image_data = IMAGE_DATA.lock().unwrap(); // only load image data if they open the TODO: editor
+    //let mut image_data = IMAGE_DATA.lock().unwrap(); // only load image data if they open the TODO: editor
     *image_path = path.clone();
-    *image_data = image::open(path).unwrap();
+    //*image_data = image::open(path).unwrap();
     });
 }
 
+// This is not useful
 #[tauri::command]
 fn resize_image(p: f32) -> String {
     let image_data = IMAGE_DATA.lock().unwrap(); // channge so it doesn't freeze program
