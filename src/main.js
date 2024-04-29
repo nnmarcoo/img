@@ -10,12 +10,6 @@ import * as viewport from './viewport.js';
 // TODO: Handle multiple objects in viewport
 // Should elements that are only referenced once not be saved as const?
   
-const canvas = document.getElementById('canvas');
-export const nextImage = document.getElementById('next-image');
-export const prevImage = document.getElementById('prev-image');
-export const zoomText = document.getElementById('zoom-text');
-export const zoomTextSymbol = document.getElementById('zoom-text-symbol');
-export const bottomBarText = document.getElementById('bottom-bar-text');
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');

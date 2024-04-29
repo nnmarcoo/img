@@ -1,5 +1,5 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './main.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 
