@@ -4,7 +4,6 @@ import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 
 const ctx = canvas.getContext('2d');
-let filter = new Filter();
 
 let centerX = 0;
 let centerY = 0;
