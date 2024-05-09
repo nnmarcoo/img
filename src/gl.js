@@ -22,9 +22,6 @@ export class glc {
 
     this.gl.bindVertexArray(this.vao);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
-
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.ibo);
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.edges, this.gl.STATIC_DRAW);
 
@@ -64,6 +61,7 @@ export class glc {
       (x + iWH) / cWH, (y + iHH) / cHH, // top-right
       (x - iWH) / cWH, (y + iHH) / cHH  // top-left
     ]);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
     this.draw();
   }
