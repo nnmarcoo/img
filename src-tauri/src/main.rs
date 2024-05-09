@@ -8,7 +8,6 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
 use std::fs::File;
-use image::codecs::png;
 use image::DynamicImage;
 use std::thread;
 use base64::{engine::general_purpose, Engine as _};

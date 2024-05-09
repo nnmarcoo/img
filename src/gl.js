@@ -60,3 +60,12 @@ export class glc {
     this.gl.drawElements(this.gl.TRIANGLES, this.edges.length, this.gl.UNSIGNED_SHORT, 0);
   }
 };
+
+function calculateVertices() { // Should I recalc verts or make matrix
+  return new Float32Array([
+    0.0, 0.0,
+    0.0, 0.0,
+    0.0, 0.0,
+    0.0, 0.0
+  ]);
+}

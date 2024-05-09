@@ -31,11 +31,3 @@ export function normalizeY(y) {
   return y / (canvas.height/2);
 }
 
-export function calculateVertices() {
-  return new Float32Array([
-    0.0, 0.0,
-    0.0, 0.0,
-    0.0, 0.0,
-    0.0, 0.0
-  ]);
-}
