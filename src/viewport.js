@@ -40,6 +40,7 @@ export function init() {
   canvas.addEventListener('mousedown', mouseDown);
   document.addEventListener('mouseup', mouseUp);
   document.addEventListener('mousemove', mouseMove);
+  canvas.addEventListener('dblclick', centerImage);
 }
 
 function mouseDown(e) {
@@ -97,6 +98,7 @@ function getFitZoom() {
 
 function centerImage() {
   img.x = img.y = 0;
+  gl.clipVertices(img.x, img.y, img.width, img.height);
 }
 
 function clampImageX(v) {
