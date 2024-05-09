@@ -13,12 +13,6 @@ export class glc {
     this.vbo = this.gl.createBuffer();
     this.ibo = this.gl.createBuffer();
 
-    this.vertices = new Float32Array([
-      -0.5, -0.5, // 0 bottom-left
-       0.5, -0.5, // 1 bottom-right
-       0.5,  0.5, // 2 top-right
-      -0.5,  0.5  // 3 top-left
-    ]);
     this.edges = new Uint16Array([0, 1, 2, 3, 0, 2]);
   }
 
