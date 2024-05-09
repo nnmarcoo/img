@@ -22,12 +22,3 @@ in vec2 coordinates;
 void main() {
     gl_Position = vec4(coordinates, 0.0, 1.0);
 }`;
-
-export function normalizeX(x) {
-  return x / (canvas.width/2);
-}
-
-export function normalizeY(y) {
-  return y / (canvas.height/2);
-}
-
