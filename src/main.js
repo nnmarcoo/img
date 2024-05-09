@@ -3,13 +3,8 @@ const { open } = window.__TAURI__.dialog;
 const { listen } = window.__TAURI__.event;
 import * as viewport from './viewport.js';
 
-// REMINDER: Remove dormant event handlers
 // TODO: Minify with esbuild
 // TODO: If mouse isn't in the image, zoom towards center?
-// TODO: Scrolling over zoom text should care about margins?
-// TODO: Handle multiple objects in viewport
-// Should elements that are only referenced once not be saved as const?
-  
 
 document.addEventListener('DOMContentLoaded', async () => {
   invoke('show_window');

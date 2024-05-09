@@ -2,17 +2,9 @@ const { invoke, convertFileSrc} = window.__TAURI__.tauri;
 import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
+import { glc } from './gl.js';
 
-const ctx = canvas.getContext('2d');
-
-let centerX = 0;
-let centerY = 0;
-
-let img = new Image();
-let imgX = 0;
-let imgY = 0;
-let imgW = 0;
-let imgH = 0;
+const gl = new glc();
 
 const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
                     0.70, 0.80, 0.90, 1.00, 1.25, 1.50, 1.75, 2.00,
@@ -20,257 +12,85 @@ const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
                     10.0, 12.0, 15.0, 18.0, 21.0, 25.0, 30.0, 35.0 ];
 let zoomStep = 0;
 
-let mPrevX = 0;
-let mPrevY = 0;
-let isDragging = false;
+let img = {
+  element: new Image(),
+  width: 0,
+  height: 0,
+  x: 0, // TODO: Put in matrix and offset image?
+  y: 0,
+};
 
-export function fillParent() {
-    let ratio = (() => {
-      let dpr = window.devicePixelRatio || 1,
-          bsr = ctx.webkitBackingStorePixelRatio ||
-                ctx.mozBackingStorePixelRatio ||
-                ctx.msBackingStorePixelRatio ||
-                ctx.oBackingStorePixelRatio ||
-                ctx.backingStorePixelRatio || 1;
-      return dpr / bsr;
-    })();
+let mPrevX = 0,
+    mPrevY = 0,
+    isDragging = false;
 
-    canvas.width = canvas.parentElement.offsetWidth * ratio;
-    canvas.height = canvas.parentElement.offsetHeight * ratio;
-    canvas.style.width = canvas.parentElement.offsetWidth + 'px';
-    canvas.style.height = canvas.parentElement.offsetHeight + 'px';
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    setCenter();
-    draw();
+export function setImage(src) {
+  invoke('set_image_path', {path: src});
+  img.element.src = convertFileSrc(src);
+  img.element.onload = () => {
+    // TODO
+  };
 }
 
 export function init() {
-    fillParent();
+  fillParent();
+  gl.init();
 
-    canvas.addEventListener('mousedown', mouseDown);
-    document.addEventListener('mouseup', mouseUp);
-    document.addEventListener('mousemove', mouseMove);
-    canvas.addEventListener('wheel', wheel);
-    canvas.addEventListener('dblclick', dblClick);
-    window.addEventListener('resize', fillParent);
-
-    zoomText.addEventListener('focus', focusZoomText);
-    zoomText.addEventListener('blur', blurZoomText);
-    zoomText.addEventListener('input', inputZoomText);
-
-    nextImage.addEventListener('click', cycleNextImage);
-    prevImage.addEventListener('click', cyclePrevImage);
+  window.addEventListener('resize', fillParent);
+  canvas.addEventListener('mousedown', mouseDown);
+  document.addEventListener('mouseup', mouseUp);
+  document.addEventListener('mousemove', mouseMove);
 }
 
-function dblClick() {
-    clearImage();
-    centerImage();
-    draw();
+function mouseDown(e) {
+  if (img.element.src === '' || e.buttons !== 1) return;
+  mPrevX = e.clientX;
+  mPrevY = e.clientY;
+  isDragging = true;
 }
 
-export function setImage(src) {
-    renderLoading();
-    img.src = convertFileSrc(src);
-    zoomTextSymbol.textContent = '%';
-    invoke('set_image_path', {path: src});
-
-    img.onload = () => {
-        clearImage();
-        initImage();
-        bottomBarText.textContent = getFolderAndName(src);
-    }
+function mouseUp() {
+  if (img.element.src === '') return;
+  canvas.style.cursor = 'default';
+  isDragging = false;
 }
 
-async function cycleNextImage() {
-    if (img.src === '') return;
-    setImage(await invoke('next_image'));
-}
+function mouseMove(e) {
+  if (e.buttons !== 1 || !isDragging) return;
+  canvas.style.cursor = 'grabbing';
 
-async function cyclePrevImage() {
-    if (img.src === '') return;
-    setImage(await invoke('prev_image'));
+  // TODO: Clamp
+  img.x = img.x + e.clientX - mPrevX;
+  img.y = img.y + e.clientY - mPrevY;
+
+  mPrevX = e.clientX;
+  mPrevY = e.clientY;
 }
 
 function initImage() {
-    centerImage();
-    let zoom = getFitZoom();
+  centerImage();
+  let zoom = getFitZoom();
 
-    for (let i = 0; i < zoomSteps.length; i++) {
-        if (zoomSteps[i] >= zoom) {
-            zoomStep = clamp(i-1, 0, zoomSteps.length-1);
-            break;
-        }
+  for (let i = 0; i < zoomSteps.length; i++)
+    if (zoomSteps[i] >= zoom) {
+      zoomStep = clamp(i-1, 0, zoomSteps.length-1);
+      break;
     }
-    zoomCustom(zoomSteps[zoomStep]);
+    // TODO: zoomCustom..
 }
 
-function draw() {
-    if (img.src === '') {
-        renderFileSelect();
-        return;
-    }
-    ctx.drawImage(img, Math.floor(centerX + imgX - imgW/2),
-                       Math.floor(centerY + imgY - imgH/2),
-                       Math.floor(imgW), Math.floor(imgH));
-}
-
-function zoomCustom(p, render = true) {
-    imgW = p * img.naturalWidth;
-    imgH = p * img.naturalHeight;
-
-    if (render) {
-        clearImage();
-        draw();
-    }
-
-    let newZoomStep = 0;
-    for (let i = 0; i < zoomSteps.length; i++)
-      if (p >= zoomSteps[i])
-        newZoomStep = i;
-    zoomStep = newZoomStep;
-
-    updateZoomText(p * 100);
-}
-
-function zoomIn(render = true) {
-    zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
-    zoomCustom(zoomSteps[zoomStep], render);
-}
-
-function zoomOut(render = true) {
-    zoomStep = Math.max(zoomStep - 1, 0);
-    zoomCustom(zoomSteps[zoomStep], render);
-}
-
-function centerImage() {
-    imgX = 0;
-    imgY = 0;
+function fillParent() {
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+  gl.draw();
 }
 
 function getFitZoom() {
-    let scaleW = canvas.clientWidth / img.naturalWidth,
-        scaleH = canvas.clientHeight / img.naturalHeight;
-    return Math.min(scaleW, scaleH);
+  let scaleW = canvas.width / img.element.naturalWidth,
+      scaleH = canvas.height / img.element.naturalHeight;
+  return Math.min(scaleW, scaleH);
 }
 
-function setCenter() {
-    centerX = canvas.clientWidth/2;
-    centerY = canvas.clientHeight/2;
-}
-
-function renderFileSelect() {
-    canvas.style.cursor = 'pointer';
-    ctx.fillStyle = '#EEEEEE';
-    ctx.textAlign = 'center';
-    // Draw icon
-    ctx.font = '80px Trebuchet MS';
-    ctx.fillText('🗎', canvas.clientWidth/2, canvas.clientHeight/2 + 14);
-    // Draw text
-    ctx.font = '16px Trebuchet MS';
-    ctx.fillText('Drag or select file to begin', canvas.clientWidth/2, canvas.clientHeight/2 + 41);
-}
-
-function renderLoading() {
-    canvas.style.cursor = 'default';
-    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-    ctx.fillText('Loading...', canvas.clientWidth/2, canvas.clientHeight/2 + 8);
-}
-
-function clearImage() {
-    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-}
-
-export function mouseDown(e) {
-    if (img.src === '' || e.buttons !== 1) return;
-    mPrevX = e.clientX;
-    mPrevY = e.clientY;
-    isDragging = true;
-}
-
-export function mouseUp() {
-    if (img.src === '') return;
-    canvas.style.cursor = 'default';
-    isDragging = false;
-}
-
-export function mouseMove(e) {
-    if (e.buttons !== 1 || !isDragging) return;
-    if (canvas.style.cursor !== 'grabbing')
-        canvas.style.cursor = 'grabbing';
-
-    clearImage();
-
-    imgX = clampImageX(imgX + (e.clientX - mPrevX));
-    imgY = clampImageY(imgY + (e.clientY - mPrevY));
-
-    mPrevX = e.clientX;
-    mPrevY = e.clientY;
-
-    draw();
-      
-}
-
-export async function wheel(e) {
-    if (img.src === '') return;
-    clearImage();
-
-
-    const pW = imgW;
-    const pH = imgH;
-
-    if (e.deltaY < 0) // scroll up
-      zoomIn(false);
-    else
-      zoomOut(false);
-    
-    //const resized = await invoke('resize_image', {p: zoomSteps[zoomStep], w: img.naturalWidth, h: img.naturalHeight});
-    //img.src = 'data:image/png;base64,' + resized;
-
-    const dW = imgW - pW;
-    const dH = imgH - pH;
-
-    const offsetX = (e.clientX - (imgX + canvas.clientWidth/2)) * dW / pW;
-    const offsetY = (e.clientY - (imgY + canvas.clientHeight/2)) * dH / pH;
-
-    imgX = clampImageX(imgX - offsetX);
-    imgY = clampImageY(imgY - offsetY);
-
-    draw();
-}
-
-function clampImageX(v) {
-  let hW = imgW/2;
-  return clamp(v, -hW, hW);
-}
-  
-function clampImageY(v) {
-    let hH = imgH/2
-    return clamp(v, -hH, hH);
-}
-
-function updateZoomText(text) {
-    zoomText.textContent = text;
-}
-
-function inputZoomText() {
-    let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
-    if (cleanText !== zoomText.innerText)
-      zoomText.blur();
-    if (cleanText.length > 0) 
-      updateZoomText(cleanText);
-    else
-      updateZoomText(zoomSteps[zoomStep] * 100);
-    zoomCustom(zoomText.textContent / 100);
-}
-
-function focusZoomText() {
-    let range = document.createRange();
-    range.selectNodeContents(zoomText);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
-
-function blurZoomText() {
-    window.getSelection().removeAllRanges();
+function centerImage() {
+  img.x = img.y = 0;
 }
