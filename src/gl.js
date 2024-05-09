@@ -49,23 +49,33 @@ export class glc {
     this.gl.enableVertexAttribArray(this.coord);
 
     this.gl.bindVertexArray(null);
-    this.draw();
+    this.draw(); // TODO: Remove
   }
 
   draw() {
     //this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    this.gl.viewport(0, 0, canvas.width, canvas.height);
   
     this.gl.bindVertexArray(this.vao);
     this.gl.drawElements(this.gl.TRIANGLES, this.edges.length, this.gl.UNSIGNED_SHORT, 0);
   }
+
+  clipVertices(x, y, w, h) {
+    const iWH = w / 2;
+    const iHH = h / 2;
+    const cWH = canvas.width / 2;
+    const cHH = canvas.height / 2;
+    this.vertices = new Float32Array([
+      (x - iWH) / cWH, (y - iHH) / cHH, // bottom-left
+      (x + iWH) / cWH, (y - iHH) / cHH, // bottom-right
+      (x + iWH) / cWH, (y + iHH) / cHH, // top-right
+      (x - iWH) / cWH, (y + iHH) / cHH  // top-left
+    ]);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
+    this.draw();
+  }
+
+  fill() {
+    this.gl.viewport(0, 0, canvas.width, canvas.height);
+  }
 };
 
-function calculateVertices() { // Should I recalc verts or make matrix
-  return new Float32Array([
-    0.0, 0.0,
-    0.0, 0.0,
-    0.0, 0.0,
-    0.0, 0.0
-  ]);
-}

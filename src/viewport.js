@@ -14,9 +14,9 @@ let zoomStep = 0;
 
 let img = {
   element: new Image(),
-  width: 0,
-  height: 0,
-  x: 0, // TODO: Put in matrix and offset image?
+  width: 200,
+  height: 200,
+  x: 0,
   y: 0,
 };
 
@@ -60,11 +60,13 @@ function mouseMove(e) {
   canvas.style.cursor = 'grabbing';
 
   // TODO: Clamp
-  img.x = img.x + e.clientX - mPrevX;
-  img.y = img.y + e.clientY - mPrevY;
+  img.x = clampImageX(img.x + (e.clientX - mPrevX));
+  img.y = clampImageY(img.y - (e.clientY - mPrevY));
 
   mPrevX = e.clientX;
   mPrevY = e.clientY;
+
+  gl.clipVertices(img.x, img.y, img.width, img.height);
 }
 
 function initImage() {
@@ -80,17 +82,29 @@ function initImage() {
 }
 
 function fillParent() {
+  // TODO: Fix device pixel ratio
   canvas.width = canvas.parentElement.offsetWidth;
   canvas.height = canvas.parentElement.offsetHeight;
-  gl.draw();
+  gl.fill();
+  gl.clipVertices(img.x, img.y, img.width, img.height);
 }
 
 function getFitZoom() {
-  let scaleW = canvas.width / img.element.naturalWidth,
+  const scaleW = canvas.width / img.element.naturalWidth,
       scaleH = canvas.height / img.element.naturalHeight;
   return Math.min(scaleW, scaleH);
 }
 
 function centerImage() {
   img.x = img.y = 0;
+}
+
+function clampImageX(v) {
+  const hW = img.width/2;
+  return clamp(v, -hW, hW);
+}
+  
+function clampImageY(v) {
+  const hH = img.height/2
+  return clamp(v, -hH, hH);
 }
