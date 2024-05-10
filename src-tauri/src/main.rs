@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 #[macro_use] extern crate lazy_static;
-use std::io::{Cursor, Read};
+use std::io::Read;
 use std::sync::Mutex;
 use std::env;
 use std::path::{Path, PathBuf};

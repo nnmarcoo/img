@@ -12,7 +12,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const imgTypes = await invoke('get_image_types');
   viewport.init();
 
-  canvas.addEventListener('click', selectFile);
+  let initPath = await invoke('get_image_path');
+  if (initPath !== '')
+    setImage(initPath);
+  else
+    canvas.addEventListener('click', selectFile);
+  
 
   await listen('tauri://file-drop', (e) => {
     let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
