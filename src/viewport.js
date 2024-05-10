@@ -1,6 +1,6 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
 import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './elements.js';
-import { clamp, getFolderAndName } from './util.js';
+import { binarySearch, clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
 
@@ -35,11 +35,7 @@ export function setImage(src) {
 
     // TODO: Set gl texture
 
-    for (let i = 0; i < zoomSteps.length; i++) // start at zoom fit instead of 0 and find closest zoom
-        if (zoomSteps[i] >= zoom) {
-            zoomStep = clamp(i-1, 0, zoomSteps.length-1);
-            break;
-        }
+    zoomStep = zoomSteps.indexOf(binarySearch(zoomSteps, zoom));
     zoomCustom(zoomSteps[zoomStep]);
   };
 }

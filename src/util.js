@@ -22,3 +22,20 @@ in vec2 coordinates;
 void main() {
     gl_Position = vec4(coordinates, 0.0, 1.0);
 }`;
+
+export function binarySearch(arr, n) {
+  let left = 0,
+      right = numbers.length - 1,
+      result = null;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (arr[mid] <= n)
+      left = mid + 1;
+    else {
+      result = arr[mid];
+      right = mid - 1;
+    }
+  }
+  return result;
+}
