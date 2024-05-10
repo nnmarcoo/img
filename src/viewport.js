@@ -1,6 +1,6 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
 import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './elements.js';
-import { binarySearch, clamp, getFolderAndName } from './util.js';
+import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
 
@@ -29,13 +29,19 @@ let mPrevX = 0,
 export function setImage(src) {
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
+
   img.element.onload = () => {
     centerImage();
     const zoom = getFitZoom();
 
     // TODO: Set gl texture
+    
+    for (let i in zoomSteps)
+      if (zoomSteps[i] >= zoom) { 
+        zoomStep = clamp(i-1, 0, zoomSteps.length-1);
+        break;
+      }
 
-    zoomStep = zoomSteps.indexOf(binarySearch(zoomSteps, zoom));
     zoomCustom(zoomSteps[zoomStep]);
   };
 }
