@@ -14,8 +14,8 @@ let zoomStep = 0;
 
 let img = {
   element: new Image(),
-  width: 460,
-  height: 460,
+  width: 0,
+  height: 0,
   x: 0,
   y: 0,
 };
@@ -28,7 +28,17 @@ export function setImage(src) {
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
   img.element.onload = () => {
-    // TODO
+    centerImage();
+    const zoom = getFitZoom();
+
+    // TODO: Set gl texture
+
+    for (let i = 0; i < zoomSteps.length; i++) 
+        if (zoomSteps[i] >= zoom) {
+            zoomStep = clamp(i-1, 0, zoomSteps.length-1);
+            break;
+        }
+    zoomCustom(zoomSteps[zoomStep]);
   };
 }
 
@@ -117,18 +127,6 @@ function mouseMove(e) {
   mPrevY = e.clientY;
 
   gl.draw(img.x, img.y, img.width, img.height);
-}
-
-function initImage() {
-  centerImage();
-  let zoom = getFitZoom();
-
-  for (let i = 0; i < zoomSteps.length; i++)
-    if (zoomSteps[i] >= zoom) {
-      zoomStep = clamp(i-1, 0, zoomSteps.length-1);
-      break;
-    }
-    // TODO: zoomCustom..
 }
 
 function fillParent() {
