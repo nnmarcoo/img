@@ -63,7 +63,7 @@ function wheel(e) {
   img.x = clampImageX(img.x - offsetX);
   img.y = clampImageY(img.y + offsetY);
 
-  gl.clipVertices(img.x, img.y, img.width, img.height);
+  gl.draw(img.x, img.y, img.width, img.height);
 }
 
 function zoomIn(render = true) {
@@ -81,7 +81,7 @@ function zoomCustom(p, render = true) {
   img.height = p * img.element.naturalHeight;
 
   if (render)
-    gl.clipVertices(img.x, img.y, img.width, img.height);
+    gl.draw(img.x, img.y, img.width, img.height);
 
   /*
   let newZoomStep = 0;
@@ -116,7 +116,7 @@ function mouseMove(e) {
   mPrevX = e.clientX;
   mPrevY = e.clientY;
 
-  gl.clipVertices(img.x, img.y, img.width, img.height);
+  gl.draw(img.x, img.y, img.width, img.height);
 }
 
 function initImage() {
@@ -136,7 +136,7 @@ function fillParent() {
   canvas.width = canvas.parentElement.offsetWidth;
   canvas.height = canvas.parentElement.offsetHeight;
   gl.fill();
-  gl.clipVertices(img.x, img.y, img.width, img.height);
+  gl.draw(img.x, img.y, img.width, img.height);
 }
 
 function getFitZoom() {
@@ -147,7 +147,7 @@ function getFitZoom() {
 
 function centerImage() {
   img.x = img.y = 0;
-  gl.clipVertices(img.x, img.y, img.width, img.height);
+  gl.draw(img.x, img.y, img.width, img.height);
 }
 
 function clampImageX(v) {
