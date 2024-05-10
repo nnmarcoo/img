@@ -34,8 +34,6 @@ export function setImage(src) {
     centerImage();
     const zoom = getFitZoom();
 
-    // TODO: Set gl texture
-    
     for (let i in zoomSteps)
       if (zoomSteps[i] >= zoom) { 
         zoomStep = clamp(i-1, 0, zoomSteps.length-1);
@@ -43,12 +41,16 @@ export function setImage(src) {
       }
 
     zoomCustom(zoomSteps[zoomStep]);
+    
+    gl.setTexture(img.element);
   };
 }
 
 export function init() {
   fillParent();
   gl.init();
+
+  img.element.crossOrigin = 'anonymous';
 
   window.addEventListener('resize', fillParent);
   canvas.addEventListener('mousedown', mouseDown);

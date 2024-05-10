@@ -9,17 +9,25 @@ export function getFolderAndName(src) {
   return folder + '\\' + file;
 }
 
-export const bicubicFragment = `#version 300 es
-precision highp float;
-out vec4 FragColor;
-void main() {
-    FragColor = vec4(0.25, 0.8, 0.9, 1.0);
-}`;
-
 export const bicubicVertex = `#version 300 es
 precision highp float;
-in vec2 coordinates;
+
+in vec2 a_position;
+in vec2 a_texCoord;
+out vec2 v_texCoord;
+
 void main() {
-    gl_Position = vec4(coordinates, 0.0, 1.0);
+  v_texCoord = a_texCoord;
+  gl_Position = vec4(a_position, 0.0, 1.0);
 }`;
 
+export const bicubicFragment = `#version 300 es
+precision highp float;
+
+in vec2 v_texCoord;
+uniform sampler2D u_texture;
+out vec4 FragColor;
+
+void main() {
+  FragColor = texture(u_texture, v_texCoord);
+}`;

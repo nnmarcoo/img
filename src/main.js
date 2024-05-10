@@ -12,18 +12,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const imgTypes = await invoke('get_image_types');
   viewport.init();
 
+  /*
   let initPath = await invoke('get_image_path');
   if (initPath !== '')
-    setImage(initPath);
+    viewport.setImage(initPath);
   else
-    canvas.addEventListener('click', selectFile);
+  */
+    canvas.addEventListener('mousedown', selectFile);
   
 
   await listen('tauri://file-drop', (e) => {
     let extension = e.payload[0].substring(e.payload[0].lastIndexOf('.') + 1); // better way?
     if (imgTypes.includes(extension))
       viewport.setImage(e.payload[0]);
-      canvas.removeEventListener('click', selectFile);
+      canvas.removeEventListener('mousedown', selectFile);
   });
 
   async function selectFile() {
@@ -37,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (file !== null) {
       viewport.setImage(file);
-      canvas.removeEventListener('click', selectFile);
+      canvas.removeEventListener('mousedown', selectFile);
     }
   }
   
