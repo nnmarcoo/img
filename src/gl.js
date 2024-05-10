@@ -13,6 +13,7 @@ export class glc {
     this.vbo = this.gl.createBuffer();
     this.ibo = this.gl.createBuffer();
 
+    this.vertices = new Float32Array(8);
     this.edges = new Uint16Array([0, 1, 2, 3, 0, 2]);
   }
 
@@ -51,16 +52,25 @@ export class glc {
   }
 
   clipVertices(x, y, w, h) {
-    const iWH = w / 2;
-    const iHH = h / 2;
-    const cWH = canvas.width / 2;
-    const cHH = canvas.height / 2;
-    this.vertices = new Float32Array([
-      (x - iWH) / cWH, (y - iHH) / cHH, // bottom-left
-      (x + iWH) / cWH, (y - iHH) / cHH, // bottom-right
-      (x + iWH) / cWH, (y + iHH) / cHH, // top-right
-      (x - iWH) / cWH, (y + iHH) / cHH  // top-left
-    ]);
+    const imgWidthHalf = w / 2,
+          imgHeightHalf = h / 2,
+          canvasWidthHalf = canvas.width / 2,
+          canvasHeightHalf = canvas.height / 2,
+          xLeftRatio = (x - imgWidthHalf) / canvasWidthHalf,
+          yLeftRatio = (y - imgHeightHalf) / canvasHeightHalf,
+          xRightRatio = (x + imgWidthHalf) / canvasWidthHalf,
+          yRightRatio = (y + imgHeightHalf) / canvasHeightHalf,
+          arr = [
+            xLeftRatio, 
+            yLeftRatio, 
+            xRightRatio, 
+            yLeftRatio, 
+            xRightRatio, 
+            yRightRatio, 
+            xLeftRatio, 
+            yRightRatio];
+
+    this.vertices.set(arr);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
     this.draw();
