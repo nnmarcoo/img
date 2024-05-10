@@ -43,6 +43,13 @@ export class glc {
     this.gl.bindVertexArray(null);
     this.draw(); // TODO: Remove
   }
+
+  setTexture(src) {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, gl.RGBA, gl.UNSIGNED_BYTE, src);
+  }
   
   draw(x, y, w, h) {
     if (typeof x !== 'undefined') {
