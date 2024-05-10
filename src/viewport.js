@@ -33,7 +33,7 @@ export function setImage(src) {
 
     // TODO: Set gl texture
 
-    for (let i = 0; i < zoomSteps.length; i++) 
+    for (let i = 0; i < zoomSteps.length; i++) // start at zoom fit instead of 0 and find closest zoom
         if (zoomSteps[i] >= zoom) {
             zoomStep = clamp(i-1, 0, zoomSteps.length-1);
             break;
