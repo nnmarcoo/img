@@ -6,7 +6,7 @@ export class glc {
     this.vs = this.gl.createShader(this.gl.VERTEX_SHADER);
     this.fs = this.gl.createShader(this.gl.FRAGMENT_SHADER);
     this.program = this.gl.createProgram();
-    //this.texture =this.gl.createTexture();
+    this.texture =this.gl.createTexture();
 
     this.coord;
     this.vao = this.gl.createVertexArray();

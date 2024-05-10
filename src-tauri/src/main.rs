@@ -43,25 +43,6 @@ fn set_image_path(path: String) {
     });
 }
 
-// This is not useful
-#[tauri::command]
-fn resize_image(p: f32) -> String {
-    let image_data = IMAGE_DATA.lock().unwrap(); // channge so it doesn't freeze program
-    let resized_image = image_data.resize(
-        ((image_data.width() as f32) * p) as u32, 
-        ((image_data.height() as f32) * p) as u32,
-         image::imageops::FilterType::Lanczos3);
-
-    let mut buffer: Vec<u8> = Vec::new();
-    let mut cursor = Cursor::new(&mut buffer);
-
-    let _ = resized_image.write_to(&mut cursor, image::ImageFormat::Png);
-
-    return general_purpose::STANDARD.encode(&buffer);
-    //return buffer.len().to_string();
-    
-}
-
 fn read_image(path: String) -> String {
     let mut file = File::open(path).unwrap();
     let mut buffer = Vec::new();
@@ -124,8 +105,7 @@ fn main() {
                                                  get_image_types, 
                                                  get_image_path, 
                                                  prev_image, 
-                                                 next_image,
-                                                 resize_image])
+                                                 next_image])
         .run(tauri::generate_context!())
         .expect("failed to run img");
 }
