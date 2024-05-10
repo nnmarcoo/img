@@ -14,8 +14,8 @@ let zoomStep = 0;
 
 let img = {
   element: new Image(),
-  width: 200,
-  height: 200,
+  width: 460,
+  height: 460,
   x: 0,
   y: 0,
 };
@@ -40,7 +40,56 @@ export function init() {
   canvas.addEventListener('mousedown', mouseDown);
   document.addEventListener('mouseup', mouseUp);
   document.addEventListener('mousemove', mouseMove);
+  canvas.addEventListener('wheel', wheel);
   canvas.addEventListener('dblclick', centerImage);
+}
+
+function wheel(e) {
+  if (img.element.src === '') return;
+
+  const pW = img.width,
+        pH = img.height;
+
+  if (e.deltaY < 0) // scroll up
+    zoomIn(false);
+  else
+    zoomOut(false);
+
+  const dW = img.width - pW,
+        dH = img.height - pH,
+        offsetX = (e.clientX - (img.x + canvas.width/2)) * dW / pW,
+        offsetY = (e.clientY - (img.y + canvas.height/2)) * dH / pH;
+
+  img.x = clampImageX(img.x - offsetX);
+  img.y = clampImageY(img.y + offsetY);
+
+  gl.clipVertices(img.x, img.y, img.width, img.height);
+}
+
+function zoomIn(render = true) {
+  zoomStep = Math.min(zoomStep + 1, zoomSteps.length - 1);
+  zoomCustom(zoomSteps[zoomStep], render);
+}
+
+function zoomOut(render = true) {
+  zoomStep = Math.max(zoomStep - 1, 0);
+  zoomCustom(zoomSteps[zoomStep], render);
+}
+
+function zoomCustom(p, render = true) {
+  img.width = p * img.element.naturalWidth;
+  img.height = p * img.element.naturalHeight;
+
+  if (render)
+    gl.clipVertices(img.x, img.y, img.width, img.height);
+
+  /*
+  let newZoomStep = 0;
+    for (let i = 0; i < zoomSteps.length; i++)
+      if (p >= zoomSteps[i])
+        newZoomStep = i;
+    zoomStep = newZoomStep;
+    */
 }
 
 function mouseDown(e) {
