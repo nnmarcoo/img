@@ -4,6 +4,8 @@ import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
 
+// TODO: save image data as normalized clip values
+
 const gl = new glc();
 
 const zoomSteps = [ 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60,
