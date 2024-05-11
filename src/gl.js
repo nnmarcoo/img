@@ -59,6 +59,7 @@ export class glc {
   }
   
   draw(x, y, w, h) {
+    this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
     const imgWidthHalf = w / 2,
           imgHeightHalf = h / 2,
           canvasWidthHalf = canvas.width / 2,
