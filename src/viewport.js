@@ -73,8 +73,8 @@ function wheel(e) {
 
   const dW = img.width - pW,
         dH = img.height - pH,
-        offsetX = (e.clientX - (img.x + canvas.width/2)) * dW / pW,
-        offsetY = (e.clientY - (img.y + canvas.height/2)) * dH / pH;
+        offsetX = (e.clientX - ( img.x + canvas.clientWidth/2)) * dW / pW,
+        offsetY = (e.clientY - (-img.y + canvas.clientHeight/2)) * dH / pH;
 
   img.x = clampImageX(img.x - offsetX);
   img.y = clampImageY(img.y + offsetY);
