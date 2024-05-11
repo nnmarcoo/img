@@ -42,7 +42,7 @@ export function setImage(src) {
 
     zoomCustom(zoomSteps[zoomStep]);
     
-    gl.setTexture(img.element);
+    //gl.setTexture(img.element);
   };
 }
 
@@ -139,6 +139,8 @@ function fillParent() {
   // TODO: Fix device pixel ratio
   canvas.width = canvas.parentElement.offsetWidth;
   canvas.height = canvas.parentElement.offsetHeight;
+  canvas.style.width = canvas.parentElement.offsetWidth + 'px';
+  canvas.style.height = canvas.parentElement.offsetHeight + 'px';
   gl.fill();
   gl.draw(img.x, img.y, img.width, img.height);
 }
