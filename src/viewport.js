@@ -73,11 +73,11 @@ function wheel(e) {
 
   const dW = img.width - pW,
         dH = img.height - pH,
-        offsetX = (e.clientX - ( img.x + canvas.clientWidth/2)) * dW / pW,
-        offsetY = (e.clientY - (-img.y + canvas.clientHeight/2)) * dH / pH;
+        offsetX = (e.clientX - (img.x + canvas.clientWidth/2)) * dW / pW,
+        offsetY = (e.clientY - (img.y + canvas.clientHeight/2)) * dH / pH;
 
   img.x = clampImageX(img.x - offsetX);
-  img.y = clampImageY(img.y + offsetY);
+  img.y = clampImageY(img.y - offsetY);
 
   gl.draw(img.x, img.y, img.width, img.height);
 }
@@ -146,8 +146,8 @@ function fillParent() {
 }
 
 function getFitZoom() {
-  const scaleW = canvas.width / img.element.naturalWidth,
-      scaleH = canvas.height / img.element.naturalHeight;
+  const scaleW = canvas.clientWidth / img.element.naturalWidth,
+        scaleH = canvas.clientHeight / img.element.naturalHeight;
   return Math.min(scaleW, scaleH);
 }
 
