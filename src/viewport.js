@@ -63,21 +63,29 @@ export function init() {
 function wheel(e) {
   if (img.element.src === '') return;
 
-  const pW = img.width,
-        pH = img.height;
+  const prevW = img.width,
+        prevH = img.height;
 
   if (e.deltaY < 0) // scroll up
     zoomIn(false);
   else
     zoomOut(false);
 
-  const dW = img.width - pW,
-        dH = img.height - pH,
-        offsetX = (e.clientX - (img.x + canvas.clientWidth/2)) * dW / pW,
-        offsetY = (e.clientY - (img.y + canvas.clientHeight/2)) * dH / pH;
+  const diffW = img.width - prevW,
+        diffH = img.height - prevH,
+        offsetX = (e.clientX - (img.x + canvas.clientWidth/2)) * diffW / prevW,
+        offsetY = (e.clientY - (img.y + canvas.clientHeight/2)) * diffH / prevH;
 
-  img.x = clampImageX(img.x - offsetX);
-  img.y = clampImageY(img.y - offsetY);
+        console.log(e.clientY);
+        console.log(img.y);
+
+  // img.x is position of center of image with 0,0 at center of canvas
+  // e.clientX is position of mosue with x=0 at top-left of canvas
+  // canvas.clientWidth is width of canvas
+
+
+  //img.x = clampImageX(img.x - offsetX);
+  //img.y = clampImageY(img.y - offsetY);
 
   gl.draw(img.x, img.y, img.width, img.height);
 }
