@@ -73,19 +73,11 @@ function wheel(e) {
 
   const diffW = img.width - prevW,
         diffH = img.height - prevH,
-        offsetX = (e.clientX - (img.x + canvas.clientWidth/2)) * diffW / prevW,
-        offsetY = (e.clientY - (img.y + canvas.clientHeight/2)) * diffH / prevH;
+        offsetX = (e.clientX - ( img.x + canvas.clientWidth/2)) * diffW / prevW,
+        offsetY = (e.clientY - (-img.y + canvas.clientHeight/2)) * diffH / prevH;
 
-        console.log(e.clientY);
-        console.log(img.y);
-
-  // img.x is position of center of image with 0,0 at center of canvas
-  // e.clientX is position of mosue with x=0 at top-left of canvas
-  // canvas.clientWidth is width of canvas
-
-
-  //img.x = clampImageX(img.x - offsetX);
-  //img.y = clampImageY(img.y - offsetY);
+  img.x = clampImageX(img.x - offsetX);
+  img.y = clampImageY(img.y + offsetY);
 
   gl.draw(img.x, img.y, img.width, img.height);
 }
