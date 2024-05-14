@@ -48,7 +48,6 @@ export class glc {
     this.widthLocation = this.gl.getUniformLocation(this.program, "u_textureWidth");
     this.heightLocation = this.gl.getUniformLocation(this.program, "u_textureHeight");
 
-
     this.gl.bindVertexArray(this.vao);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
@@ -82,7 +81,7 @@ export class glc {
   }
   
   draw(x, y, w, h) {
-    //this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+    this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
     const imgWidthHalf = w / 2,
           imgHeightHalf = h / 2,
           canvasWidthHalf = canvas.width / 2,
