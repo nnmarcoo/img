@@ -12,6 +12,9 @@ export class glc {
     this.texCoordLocation;
     this.textureLocation;
 
+    this.widthLocation;
+    this.heightLocation;
+
     this.vao = this.gl.createVertexArray();
     this.vbo = this.gl.createBuffer();
     this.ibo = this.gl.createBuffer();
@@ -40,7 +43,11 @@ export class glc {
 
     this.positionLocation = this.gl.getAttribLocation(this.program, 'a_position');
     this.texCoordLocation = this.gl.getAttribLocation(this.program, 'a_texCoord');
-    this.textureLocation = this.gl.getUniformLocation(this.program, 'u_texture'); // Get texture uniform location
+    this.textureLocation = this.gl.getUniformLocation(this.program, 'u_texture');
+
+    this.widthLocation = this.gl.getUniformLocation(this.program, "u_textureWidth");
+    this.heightLocation = this.gl.getUniformLocation(this.program, "u_textureHeight");
+
 
     this.gl.bindVertexArray(this.vao);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
@@ -62,16 +69,20 @@ export class glc {
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
 
     this.gl.uniform1i(this.textureLocation, 0);
+
+    this.gl.uniform1f(this.widthLocation, img.naturalWidth);
+    this.gl.uniform1f(this.heightLocation, img.naturalHeight);
+
     this.draw();
   }
   
   draw(x, y, w, h) {
-    this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+    //this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
     const imgWidthHalf = w / 2,
           imgHeightHalf = h / 2,
           canvasWidthHalf = canvas.width / 2,

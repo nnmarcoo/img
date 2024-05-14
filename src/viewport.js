@@ -79,7 +79,7 @@ function wheel(e) {
   img.x = clampImageX(img.x - offsetX);
   img.y = clampImageY(img.y + offsetY);
 
-  gl.draw(img.x, img.y, img.width, img.height);
+  draw();
 }
 
 function zoomIn(render = true) {
@@ -97,7 +97,7 @@ function zoomCustom(p, render = true) {
   img.height = p * img.element.naturalHeight;
 
   if (render)
-    gl.draw(img.x, img.y, img.width, img.height);
+    draw();
 
   /*
   let newZoomStep = 0;
@@ -132,7 +132,7 @@ function mouseMove(e) {
   mPrevX = e.clientX;
   mPrevY = e.clientY;
 
-  gl.draw(img.x, img.y, img.width, img.height);
+  draw();
 }
 
 function fillParent() {
@@ -142,7 +142,7 @@ function fillParent() {
   canvas.style.width = canvas.parentElement.offsetWidth + 'px';
   canvas.style.height = canvas.parentElement.offsetHeight + 'px';
   gl.fill();
-  gl.draw(img.x, img.y, img.width, img.height);
+  draw();
 }
 
 function getFitZoom() {
@@ -153,7 +153,7 @@ function getFitZoom() {
 
 function centerImage() {
   img.x = img.y = 0;
-  gl.draw(img.x, img.y, img.width, img.height);
+  draw();
 }
 
 function clampImageX(v) {
@@ -164,4 +164,8 @@ function clampImageX(v) {
 function clampImageY(v) {
   const hH = img.height/2
   return clamp(v, -hH, hH);
+}
+
+function draw() {
+  gl.draw(Math.floor(img.x), Math.floor(img.y), img.width, img.height);
 }
