@@ -58,6 +58,18 @@ export function init() {
   document.addEventListener('mousemove', mouseMove);
   canvas.addEventListener('wheel', wheel);
   canvas.addEventListener('dblclick', centerImage);
+  nextImage.addEventListener('click', cycleNextImage);
+  prevImage.addEventListener('click', cyclePrevImage);
+}
+
+async function cycleNextImage() {
+  if (img.element.src === '') return;
+  setImage(await invoke('next_image'));
+}
+
+async function cyclePrevImage() {
+  if (img.element.src === '') return;
+  setImage(await invoke('prev_image'));
 }
 
 function wheel(e) {
@@ -136,11 +148,14 @@ function mouseMove(e) {
 }
 
 function fillParent() {
+  let addX = canvas.parentElement.offsetWidth % 2 === 0 ? 1 : 0;
+  let addY = canvas.parentElement.offsetHeight % 2 === 0 ? 1 : 0; // kinda jank?
   // TODO: Fix device pixel ratio
-  canvas.width = canvas.parentElement.offsetWidth;
-  canvas.height = canvas.parentElement.offsetHeight;
-  canvas.style.width = canvas.parentElement.offsetWidth + 'px';
-  canvas.style.height = canvas.parentElement.offsetHeight + 'px';
+  
+  canvas.width = canvas.parentElement.offsetWidth + addX;
+  canvas.height = canvas.parentElement.offsetHeight + addY;
+  canvas.style.width = canvas.width + 'px';
+  canvas.style.height = canvas.height + 'px';
   gl.fill();
   draw();
 }
@@ -167,5 +182,5 @@ function clampImageY(v) {
 }
 
 function draw() {
-  gl.draw(Math.floor(img.x), Math.floor(img.y), img.width, img.height);
+  gl.draw(img.x, img.y, img.width, img.height);
 }

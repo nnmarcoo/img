@@ -77,7 +77,7 @@ export class glc {
     this.gl.uniform1f(this.widthLocation, img.element.naturalWidth);
     this.gl.uniform1f(this.heightLocation, img.element.naturalHeight);
 
-    this.draw(0,0,img.width,img.height);
+    this.draw(img.y,img.x,img.width,img.height);
   }
   
   draw(x, y, w, h) {
@@ -99,7 +99,7 @@ export class glc {
             yRightRatio, 
             xLeftRatio, 
             yRightRatio];
-          
+    
     this.vertices.set(arr);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
