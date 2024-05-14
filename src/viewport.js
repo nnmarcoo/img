@@ -42,7 +42,7 @@ export function setImage(src) {
 
     zoomCustom(zoomSteps[zoomStep]);
     
-    //gl.setTexture(img.element);
+    gl.setTexture(img.element);
   };
 }
 

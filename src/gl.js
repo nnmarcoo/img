@@ -9,20 +9,21 @@ export class glc {
     this.texture = this.gl.createTexture();
 
     this.positionLocation;
+    this.texCoordLocation;
+    this.textureLocation;
+
     this.vao = this.gl.createVertexArray();
     this.vbo = this.gl.createBuffer();
     this.ibo = this.gl.createBuffer();
 
     this.vertices = new Float32Array(8);
-    this.edges = new Uint16Array([0, 1, 2, 3, 0, 2]);
-    this.texVertices = new Float32Array([0,0,1,0,1,1,0,1]);
+    this.edges = new Uint16Array([0,1,2,3,0,2]);
+    this.texCoords = new Float32Array([0,1,1,1,1,0,0,0]);
   }
 
   init() {
-    if (!this.gl) // TODO: Fall back to DOM display
-      return
-
-    this.gl.bindVertexArray(this.vao);
+    if (!this.gl)
+      return;
 
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.ibo);
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.edges, this.gl.STATIC_DRAW);
@@ -38,23 +39,34 @@ export class glc {
     this.gl.useProgram(this.program);
 
     this.positionLocation = this.gl.getAttribLocation(this.program, 'a_position');
-    this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
+    this.texCoordLocation = this.gl.getAttribLocation(this.program, 'a_texCoord');
+    this.textureLocation = this.gl.getUniformLocation(this.program, 'u_texture'); // Get texture uniform location
+
+    this.gl.bindVertexArray(this.vao);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
     this.gl.enableVertexAttribArray(this.positionLocation);
+    this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
+
+    const texCoordBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, texCoordBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.texCoords, this.gl.STATIC_DRAW);
+    this.gl.enableVertexAttribArray(this.texCoordLocation);
+    this.gl.vertexAttribPointer(this.texCoordLocation, 2, this.gl.FLOAT, false, 0, 0);
 
     this.gl.bindVertexArray(null);
-    this.draw(); // TODO: Remove
+    this.draw();
   }
 
   setTexture(img) {
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
 
-    this.gl.activeTexture(this.gl.TEXTURE0);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+    this.gl.uniform1i(this.textureLocation, 0);
     this.draw();
   }
   
@@ -64,9 +76,9 @@ export class glc {
           imgHeightHalf = h / 2,
           canvasWidthHalf = canvas.width / 2,
           canvasHeightHalf = canvas.height / 2,
-          xLeftRatio = (x - imgWidthHalf) / canvasWidthHalf,
-          yLeftRatio = (y - imgHeightHalf) / canvasHeightHalf,
-          xRightRatio = (x + imgWidthHalf) / canvasWidthHalf,
+          xLeftRatio =  (x - imgWidthHalf)  / canvasWidthHalf,
+          yLeftRatio =  (y - imgHeightHalf) / canvasHeightHalf,
+          xRightRatio = (x + imgWidthHalf)  / canvasWidthHalf,
           yRightRatio = (y + imgHeightHalf) / canvasHeightHalf,
           arr = [
             xLeftRatio, 
@@ -90,4 +102,3 @@ export class glc {
     this.gl.viewport(0, 0, canvas.width, canvas.height);
   }
 };
-
