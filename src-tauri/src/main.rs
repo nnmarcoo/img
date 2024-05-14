@@ -2,16 +2,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 #[macro_use] extern crate lazy_static;
-use std::io::Read;
 use std::sync::Mutex;
 use std::env;
 use std::path::{Path, PathBuf};
 use std::fs;
-use std::fs::File;
 use image::DynamicImage;
 use std::thread;
-use base64::{engine::general_purpose, Engine as _};
-
 
 // Image data should not be stored here because it is all handled by webgl?
 lazy_static! {
@@ -41,13 +37,6 @@ fn set_image_path(path: String) {
     *image_path = path.clone();
     //*image_data = image::open(path).unwrap();
     });
-}
-
-fn read_image(path: String) -> String {
-    let mut file = File::open(path).unwrap();
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer).unwrap();
-    return general_purpose::STANDARD.encode(&buffer);
 }
 
 #[tauri::command]
