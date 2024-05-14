@@ -71,14 +71,14 @@ export class glc {
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img.element);
 
     this.gl.uniform1i(this.textureLocation, 0);
 
-    this.gl.uniform1f(this.widthLocation, img.naturalWidth);
-    this.gl.uniform1f(this.heightLocation, img.naturalHeight);
+    this.gl.uniform1f(this.widthLocation, img.element.naturalWidth);
+    this.gl.uniform1f(this.heightLocation, img.element.naturalHeight);
 
-    this.draw();
+    this.draw(0,0,img.width,img.height);
   }
   
   draw(x, y, w, h) {
