@@ -29,6 +29,7 @@ let mPrevX = 0,
 export function setImage(src) {
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
+  zoomTextSymbol.textContent = '%';
 
   img.element.onload = () => {
     centerImage();
@@ -60,6 +61,10 @@ export function init() {
   canvas.addEventListener('dblclick', centerImage);
   nextImage.addEventListener('click', cycleNextImage);
   prevImage.addEventListener('click', cyclePrevImage);
+
+  zoomText.addEventListener('focus', focusZoomText);
+  zoomText.addEventListener('blur', blurZoomText);
+  zoomText.addEventListener('input', inputZoomText);
 }
 
 async function cycleNextImage() {
@@ -111,13 +116,18 @@ function zoomCustom(p, render = true) {
   if (render)
     draw();
 
-  /*
-  let newZoomStep = 0;
+  
+  let newZoomStep = 0; // change this
     for (let i = 0; i < zoomSteps.length; i++)
       if (p >= zoomSteps[i])
         newZoomStep = i;
     zoomStep = newZoomStep;
-    */
+  
+   updateZoomText(p * 100);
+}
+
+function updateZoomText(text) {
+    zoomText.textContent = text;
 }
 
 function mouseDown(e) {
@@ -183,4 +193,27 @@ function clampImageY(v) {
 
 function draw() {
   gl.draw(img.x, img.y, img.width, img.height);
+}
+
+function inputZoomText() {
+    let cleanText = zoomText.innerText.replace(/\D/g, '').slice(0, 4);
+    if (cleanText !== zoomText.innerText)
+      zoomText.blur();
+    if (cleanText.length > 0) 
+      updateZoomText(cleanText);
+    else
+      updateZoomText(zoomSteps[zoomStep] * 100);
+    zoomCustom(zoomText.textContent / 100);
+}
+
+function focusZoomText() {
+    let range = document.createRange();
+    range.selectNodeContents(zoomText);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+function blurZoomText() {
+    window.getSelection().removeAllRanges();
 }
