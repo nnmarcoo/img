@@ -9,7 +9,6 @@ use std::fs;
 use image::DynamicImage;
 use std::thread;
 
-// Image data should not be stored here because it is all handled by webgl?
 lazy_static! {
     static ref IMAGE_TYPES: Vec<String> = vec![
         String::from("png"),
