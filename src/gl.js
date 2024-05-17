@@ -109,6 +109,6 @@ export class glc {
   }
 
   fill() {
-    this.gl.viewport(0, 0, canvas.width, canvas.height);
+    this.gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
   }
 };

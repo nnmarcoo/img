@@ -158,14 +158,24 @@ function mouseMove(e) {
 }
 
 function fillParent() {
-  let addX = canvas.parentElement.offsetWidth % 2 === 0 ? 1 : 0;
-  let addY = canvas.parentElement.offsetHeight % 2 === 0 ? 1 : 0; // kinda jank?
-  // TODO: Fix device pixel ratio
-  
-  canvas.width = canvas.parentElement.offsetWidth + addX;
-  canvas.height = canvas.parentElement.offsetHeight + addY;
-  canvas.style.width = canvas.width + 'px';
-  canvas.style.height = canvas.height + 'px';
+  //let addX = canvas.parentElement.offsetWidth % 2 === 0 ? 1 : 0;
+  //let addY = canvas.parentElement.offsetHeight % 2 === 0 ? 1 : 0; // kinda jank?
+  // TODO: Add back^
+
+  let ratio = (() => {
+      let dpr = window.devicePixelRatio || 1,
+          bsr = gl.webkitBackingStorePixelRatio ||
+                gl.mozBackingStorePixelRatio ||
+                gl.msBackingStorePixelRatio ||
+                gl.oBackingStorePixelRatio ||
+                gl.backingStorePixelRatio || 1;
+      return dpr / bsr;
+    })();
+
+  canvas.width = canvas.parentElement.offsetWidth * ratio;
+  canvas.height = canvas.parentElement.offsetHeight * ratio;
+  canvas.style.width = canvas.parentElement.offsetWidth + 'px';
+  canvas.style.height = canvas.parentElement.offsetHeight + 'px';
   gl.fill();
   draw();
 }
