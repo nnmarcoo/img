@@ -1,5 +1,5 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol } from './elements.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
@@ -253,3 +253,10 @@ function fitToViewport() {
   zoomCustom(zoom);
   updateZoomText(Math.round(zoom * 100));
 }
+
+zoomTextGrid.addEventListener('wheel', (e) => { // Should I also set the margin?
+    if (e.deltaY < 0) // scroll up
+        zoomIn();
+    else
+        zoomOut();
+  });
