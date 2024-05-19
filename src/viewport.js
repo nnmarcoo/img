@@ -65,6 +65,8 @@ export function init() {
   zoomText.addEventListener('focus', focusZoomText);
   zoomText.addEventListener('blur', blurZoomText);
   zoomText.addEventListener('input', inputZoomText);
+
+  document.addEventListener('keydown', keyDown);
 }
 
 async function cycleNextImage() {
@@ -159,21 +161,11 @@ function mouseMove(e) {
 
 function fillParent() {
 
-  let ratio = (() => {
-      let dpr = window.devicePixelRatio || 1,
-          bsr = gl.webkitBackingStorePixelRatio ||
-                gl.mozBackingStorePixelRatio ||
-                gl.msBackingStorePixelRatio ||
-                gl.oBackingStorePixelRatio ||
-                gl.backingStorePixelRatio || 1;
-      return dpr / bsr;
-    })();
+  let addX = canvas.parentElement.offsetWidth % 2 === 0 ? 1 : 0;
+  let addY = canvas.parentElement.offsetHeight % 2 === 0 ? 1 : 0; // kinda jank?
 
-  let addX = canvas.parentElement.offsetWidth * ratio % 2 === 0 ? 1 : 0;
-  let addY = canvas.parentElement.offsetHeight * ratio % 2 === 0 ? 1 : 0; // kinda jank?
-
-  canvas.width = canvas.parentElement.offsetWidth * ratio + addX;
-  canvas.height = canvas.parentElement.offsetHeight * ratio + addY;
+  canvas.width = canvas.parentElement.offsetWidth + addX;
+  canvas.height = canvas.parentElement.offsetHeight + addY;
   canvas.style.width = canvas.parentElement.offsetWidth + addX + 'px';
   canvas.style.height = canvas.parentElement.offsetHeight + addY + 'px';
   gl.fill();
@@ -226,4 +218,38 @@ function focusZoomText() {
 
 function blurZoomText() {
     window.getSelection().removeAllRanges();
+}
+
+async function keyDown(e) {
+  if (img.element.src === '') return;
+  if (e.ctrlKey) {
+    if (e.key === '=')
+      zoomIn();
+    else if (e.key === '-')
+      zoomOut();
+    else if (e.key === 'r')
+      e.preventDefault();
+  }
+  else if (e.key === 'z') {
+    zoomText.blur();
+    zoomText.focus();
+    e.preventDefault();
+  }
+  else if (e.key === 'f')
+    fitToViewport();
+  else if (e.key === 'c')
+    centerImage(img);
+  else if (e.key === 'ArrowRight')
+    setImage(await invoke('next_image'))
+  else if (e.key === 'ArrowLeft')
+    setImage(await invoke('prev_image'))
+  else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
+    e.preventDefault();
+}
+
+function fitToViewport() {
+  let zoom = getFitZoom();
+  centerImage(img);
+  zoomCustom(zoom);
+  updateZoomText(Math.round(zoom * 100));
 }
