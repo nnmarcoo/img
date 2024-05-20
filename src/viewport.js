@@ -206,6 +206,7 @@ function inputZoomText() {
     else
       updateZoomText(zoomSteps[zoomStep] * 100);
     zoomCustom(zoomText.textContent / 100);
+    console.log(cleanText);
 }
 
 function focusZoomText() {
