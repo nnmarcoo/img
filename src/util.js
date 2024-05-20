@@ -69,6 +69,7 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords) {
             result += texColor * xcubic[i + 1] * ycubic[j + 1];
         }
     }
+
     return result;
 }
 
