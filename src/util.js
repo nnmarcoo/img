@@ -74,5 +74,5 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords) {
 }
 
 void main() {
-  FragColor = textureBicubic(u_texture, v_texCoord);
+  FragColor = texture(u_texture, v_texCoord);
 }`;
