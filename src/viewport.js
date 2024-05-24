@@ -16,6 +16,7 @@ let zoomStep = 0;
 
 let img = {
   element: new Image(),
+  src: '',
   width: 0,
   height: 0,
   x: 0,
@@ -31,6 +32,7 @@ export function setImage(src) {
   loadingText.style.display = 'block';
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
+  img.src = src;
   zoomTextSymbol.textContent = '%';
   fileSelect.style.display = 'none';
 
@@ -75,12 +77,16 @@ export function init() {
 
 async function cycleNextImage() {
   if (img.element.src === '') return;
-  setImage(await invoke('next_image'));
+  const src = await invoke('next_image');
+  if (src === img.src) return; 
+  setImage(src);
 }
 
 async function cyclePrevImage() {
   if (img.element.src === '') return;
-  setImage(await invoke('prev_image'));
+  const src = await invoke('prev_image');
+  if (src === img.src) return;
+  setImage(src);
 }
 
 function wheel(e) {
