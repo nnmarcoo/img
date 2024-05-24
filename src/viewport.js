@@ -1,5 +1,5 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect } from './elements.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect, loadingText } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
@@ -27,6 +27,8 @@ let mPrevX = 0,
     isDragging = false;
 
 export function setImage(src) {
+  gl.clear();
+  loadingText.style.display = 'block';
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
   zoomTextSymbol.textContent = '%';
@@ -44,6 +46,7 @@ export function setImage(src) {
 
     zoomCustom(zoomSteps[zoomStep]);
     
+    loadingText.style.display = 'none';
     gl.setTexture(img);
   };
 }

@@ -37,6 +37,15 @@ body, html, :root {
   pointer-events: none;
 }
 
+#loading-text {
+  position: absolute;
+  pointer-events: none;
+  top: calc(50% - 15px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
 #file-icon {
   font-size: 80px;
 }

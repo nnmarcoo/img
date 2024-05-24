@@ -99,7 +99,7 @@ export class glc {
             xRightRatio, 
             yRightRatio, 
             xLeftRatio, 
-            yRightRatio];
+            yRightRatio]; // change this^
     
     this.vertices.set(arr);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
@@ -111,5 +111,9 @@ export class glc {
 
   fill() {
     this.gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+  }
+
+  clear() {
+    this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
   }
 };
