@@ -1,5 +1,5 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid } from './elements.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
@@ -30,6 +30,7 @@ export function setImage(src) {
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
   zoomTextSymbol.textContent = '%';
+  fileSelect.style.display = 'none';
 
   img.element.onload = () => {
     centerImage();

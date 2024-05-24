@@ -4,3 +4,4 @@ export const zoomText = document.getElementById('zoom-text');
 export const zoomTextSymbol = document.getElementById('zoom-text-symbol');
 export const bottomBarText = document.getElementById('bottom-bar-text');
 export const zoomTextGrid = document.getElementById('zoom-text-grid');
+export const fileSelect = document.getElementById('file-select');

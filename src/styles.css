@@ -24,6 +24,30 @@ body, html, :root {
   padding: 0;
 }
 
+#file-select {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  top: calc(50% - 15px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#file-icon {
+  font-size: 80px;
+}
+
+#canvas {
+  position: absolute;
+}
+#canvas:hover {
+  cursor: pointer;
+}
+
 /* darkest
  #222831
  #31363F
