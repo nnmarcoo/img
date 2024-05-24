@@ -29,10 +29,10 @@ let mPrevX = 0,
 
 export function setImage(src) {
   gl.clear();
+  img.src = src;
   loadingText.style.display = 'block';
   invoke('set_image_path', {path: src});
   img.element.src = convertFileSrc(src);
-  img.src = src;
   zoomTextSymbol.textContent = '%';
   fileSelect.style.display = 'none';
 
@@ -73,6 +73,7 @@ export function init() {
   zoomText.addEventListener('input', inputZoomText);
 
   document.addEventListener('keydown', keyDown);
+  zoomTextGrid.addEventListener('wheel', zoomTextGridWheel);
 }
 
 async function cycleNextImage() {
@@ -127,9 +128,8 @@ function zoomCustom(p, render = true) {
 
   if (render)
     draw();
-
   
-  let newZoomStep = 0; // change this
+  let newZoomStep = 0; // TODO: make own function and replace setImage() code
     for (let i = 0; i < zoomSteps.length; i++)
       if (p >= zoomSteps[i])
         newZoomStep = i;
@@ -170,7 +170,7 @@ function mouseMove(e) {
 }
 
 function fillParent() {
-
+  // TODO: Fix for high DPI screens
   let addX = canvas.parentElement.offsetWidth % 2 === 0 ? 1 : 0;
   let addY = canvas.parentElement.offsetHeight % 2 === 0 ? 1 : 0; // kinda jank?
 
@@ -269,9 +269,9 @@ function fitToViewport() {
   updateZoomText(Math.round(zoom * 100));
 }
 
-zoomTextGrid.addEventListener('wheel', (e) => { // Should I also set the margin?
-    if (e.deltaY < 0) // scroll up
-        zoomIn();
-    else
-        zoomOut();
-  });
+function zoomTextGridWheel(e) {
+  if (e.deltaY < 0) // scroll up
+    zoomIn();
+  else
+    zoomOut();
+}
