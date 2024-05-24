@@ -245,6 +245,10 @@ async function keyDown(e) {
     setImage(await invoke('next_image'))
   else if (e.key === 'ArrowLeft')
     setImage(await invoke('prev_image'))
+  else if (e.key === 'ArrowUp')
+    zoomIn();
+  else if (e.key === 'ArrowDown')
+    zoomOut();
   //else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
   //  e.preventDefault();
 }
