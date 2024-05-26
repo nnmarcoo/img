@@ -9,6 +9,10 @@ export function getFolderAndName(src) {
   return folder + '\\' + file;
 }
 
+export function imgSizeToString(img) {
+  return img.naturalWidth + ' x ' + img.naturalHeight;
+}
+
 export const bicubicVertex = `#version 300 es
 precision highp float;
 
