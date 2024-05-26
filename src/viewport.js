@@ -29,12 +29,13 @@ let mPrevX = 0,
 
 export function setImage(src) {
   gl.clear();
+  img.element.src = convertFileSrc(src);
   img.src = src;
   loadingText.style.display = 'block';
-  invoke('set_image_path', {path: src});
-  img.element.src = convertFileSrc(src);
   zoomTextSymbol.textContent = '%';
   fileSelect.style.display = 'none';
+  canvas.style.cursor = 'default';
+  invoke('set_image_path', {path: src});
 
   img.element.onload = () => {
     centerImage();
