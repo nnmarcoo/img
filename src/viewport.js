@@ -1,5 +1,5 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect, loadingText } from './elements.js';
+import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect, loadingText, checkerboard } from './elements.js';
 import { clamp, getFolderAndName } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
@@ -59,6 +59,7 @@ export function init() {
   gl.init();
 
   img.element.crossOrigin = 'anonymous';
+  checkerboard.style.display = 'none';
 
   window.addEventListener('resize', fillParent);
   canvas.addEventListener('mousedown', mouseDown);
@@ -259,6 +260,8 @@ async function keyDown(e) {
     zoomIn();
   else if (e.key === 'ArrowDown')
     zoomOut();
+  else if (e.key === 'b')
+    toggleCheckerboard();
   //else if (e.key === 'F5' || (e.metaKey && e.key === 'r'))
   //  e.preventDefault();
 }
@@ -275,4 +278,8 @@ function zoomTextGridWheel(e) {
     zoomIn();
   else
     zoomOut();
+}
+
+function toggleCheckerboard() {
+  checkerboard.style.display = checkerboard.style.display === 'none' ? 'block' : 'none'
 }
