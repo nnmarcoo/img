@@ -55,8 +55,8 @@ body, html, :root {
   width: 100%;
   height: calc(100% - 30px);
   background-color: #31363F;
-  background-size: 50px 50px;
-  background-position: 0 0, 25px 25px;
+  background-size: 15px 15px;
+  background-position: 0 0, 7.5px 7.5px;
   background-image: linear-gradient(45deg, #222831 25%, transparent 25%, transparent 75%, #222831 75%, #222831),
                     linear-gradient(45deg, #222831 25%, transparent 25%, transparent 75%, #222831 75%, #222831);
   display: none;
