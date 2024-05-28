@@ -1,6 +1,6 @@
 const { invoke, convertFileSrc} = window.__TAURI__.tauri;
-import { bottomBarText, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect, loadingText, checkerboard } from './elements.js';
-import { clamp, getFolderAndName } from './util.js';
+import { bottomBarRes, nextImage, prevImage, zoomText, zoomTextSymbol , zoomTextGrid, fileSelect, loadingText, checkerboard } from './elements.js';
+import { clamp, getFolderAndName, imgSizeToString } from './util.js';
 import { Filter } from './filter.js';
 import { glc } from './gl.js';
 
@@ -48,6 +48,8 @@ export function setImage(src) {
       }
 
     zoomCustom(zoomSteps[zoomStep]);
+
+    bottomBarRes.textContent = imgSizeToString(img.element);
     
     loadingText.style.display = 'none';
     gl.setTexture(img);
