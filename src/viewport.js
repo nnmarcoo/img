@@ -21,6 +21,11 @@ let img = {
   height: 0,
   x: 0,
   y: 0,
+  getMousePosOnImage: function(e) {
+    const xPos = (e.clientX - ((img.x + canvas.clientWidth/2) - img.width/2)) / img.width * img.element.naturalWidth;
+    const yPos = (e.clientY - ((-img.y + canvas.clientHeight/2) - img.height/2)) / img.height * img.element.naturalHeight;
+    return clamp(Math.floor(xPos), 0, img.element.naturalWidth) + ' x ' + clamp(Math.floor(yPos), 0, img.element.naturalHeight);
+  }
 };
 
 let mPrevX = 0,
@@ -49,7 +54,7 @@ export function setImage(src) {
 
     zoomCustom(zoomSteps[zoomStep]);
 
-    bottomBarRes.textContent = imgSizeToString(img.element);
+    bottomBarRes.textContent = imgSizeToString(img.element) + ' | ' + imgSizeToString(img.element); // change this
     
     loadingText.style.display = 'none';
     gl.setTexture(img);
@@ -81,21 +86,21 @@ export function init() {
 }
 
 async function cycleNextImage() {
-  if (img.element.src === '') return;
+  if (img.src === '') return;
   const src = await invoke('next_image');
   if (src === img.src) return; 
   setImage(src);
 }
 
 async function cyclePrevImage() {
-  if (img.element.src === '') return;
+  if (img.src === '') return;
   const src = await invoke('prev_image');
   if (src === img.src) return;
   setImage(src);
 }
 
 function wheel(e) {
-  if (img.element.src === '') return;
+  if (img.src === '') return;
 
   const prevW = img.width,
         prevH = img.height;
@@ -147,23 +152,24 @@ function updateZoomText(text) {
 }
 
 function mouseDown(e) {
-  if (img.element.src === '' || e.buttons !== 1) return;
+  if (img.src === '' || e.buttons !== 1) return;
   mPrevX = e.clientX;
   mPrevY = e.clientY;
   isDragging = true;
 }
 
 function mouseUp() {
-  if (img.element.src === '') return;
+  if (img.src === '') return;
   canvas.style.cursor = 'default';
   isDragging = false;
 }
 
 function mouseMove(e) {
+  if (img.src === '') return;
+  bottomBarRes.textContent = imgSizeToString(img.element) + ' | ' + img.getMousePosOnImage(e); // change this
   if (e.buttons !== 1 || !isDragging) return;
   canvas.style.cursor = 'grabbing';
 
-  // TODO: Clamp
   img.x = clampImageX(img.x + (e.clientX - mPrevX));
   img.y = clampImageY(img.y - (e.clientY - mPrevY));
 
@@ -236,7 +242,7 @@ function blurZoomText() {
 }
 
 async function keyDown(e) {
-  if (img.element.src === '') return;
+  if (img.src === '') return;
   if (e.ctrlKey) {
     if (e.key === '=')
       zoomIn();
