@@ -54,7 +54,7 @@ export function setImage(src) {
 
     zoomCustom(zoomSteps[zoomStep]);
 
-    bottomBarRes.textContent = imgSizeToString(img.element) + ' | ' + imgSizeToString(img.element); // change this
+    bottomBarRes.textContent = imgSizeToString(img.element);
     
     loadingText.style.display = 'none';
     gl.setTexture(img);
@@ -165,8 +165,9 @@ function mouseUp() {
 }
 
 function mouseMove(e) {
-  if (img.src === '') return;
-  bottomBarRes.textContent = imgSizeToString(img.element) + ' | ' + img.getMousePosOnImage(e); // change this
+  if (img.src !== '' && !isDragging)
+    bottomBarRes.textContent = img.getMousePosOnImage(e);
+
   if (e.buttons !== 1 || !isDragging) return;
   canvas.style.cursor = 'grabbing';
 
