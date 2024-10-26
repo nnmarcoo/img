@@ -8,5 +8,5 @@
   <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/nnmarcoo/img?style=for-the-badge">
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/nnmarcoo/img?style=for-the-badge">
 </h3>
-<p>Img strives for a feature set tailored to tech-savvy individuals who don't need a full photo editing suite. The goal is to remove bloat but maintain the <i>best</i> version of modern features. Img takes inspiration from all over to provide a modern UI with efficient functionality.
+<p align="center">an image viewer built in rust
 </p>
